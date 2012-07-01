@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+# Load the WordpressDeploy core library
+require File.expand_path("../../lib/wordpress_deploy", __FILE__)
+
+# Load the WordpressDeploy command line interface utility
+require File.expand_path("../../lib/wordpress_deploy/cli/utility", __FILE__)
+
+# Initialize the WordpressDeploy command line utility
+WordpressDeploy::CLI::Utility.start
