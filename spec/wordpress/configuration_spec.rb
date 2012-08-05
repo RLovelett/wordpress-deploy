@@ -54,7 +54,7 @@ describe WordpressDeploy::Wordpress::Configuration do
     describe "saving configuration" do
       it "should create a file if it does not exist" do
         # Remove the file (even if it exists)
-        FileUtils.rm subject.output
+        FileUtils.rm subject.output if File.exists? subject.output
 
         # Try saving it
         subject.save!
