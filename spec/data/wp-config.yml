@@ -1,0 +1,40 @@
+development:
+  DB_NAME: developer_database_name
+  DB_USER: root
+  DB_PASSWORD: temp
+  DB_HOST: localhost
+  DB_CHARSET: utf8
+  DB_COLLATE: ''
+
+  # Authentication Unique Keys and Salts
+  # https://api.wordpress.org/secret-key/1.1/salt/
+  # If no salts are supplied they will be generated automatically
+  #AUTH_KEY:         '*oH{(q=`tIzdNJKUk$XfHNNjKd$W=f$S`CtD.,;x0R}$/A,}]!+q0>>QfB#.Bsw]'
+  #SECURE_AUTH_KEY:  '{yg|7Q*j-?$%`b|Z!+5U,pvM,eA0+$/ruprp.mO[;|fExU:n0,-!at0+3UY@;h`X'
+  #LOGGED_IN_KEY:    'k]N 9I<-rZq#k Xg)IPhv$E*ktbD7Z_AtI){U;(P;0r#LJlYncEr%8v9tG`>BHU+'
+  #NONCE_KEY:        ' /w9->::-YB Xa#lf%TPH+cIf?]Ru4OfKGF2h8PHsa)2,n-~kRJ<[slUg<GZ Asx'
+  #AUTH_SALT:        'VYwGGP,#|9P[5RCUTdv2c8)`^{dotU0fWrU`JE9qq^n=F4//e)fCs<HF6sd>~yjW'
+  #SECURE_AUTH_SALT: 'ok}@vSs=n6%_%UCO|&[?Jc;,-,.#Q3}zR4ej%IoAL7RavTN/Xe,UrQ4)p}onRie0'
+  #LOGGED_IN_SALT:   'Z!,C*:Q_I9A`[pJm-b0Z/(Gm2qvK8>0~| T&)lM+sxG.OdEmgHbAGF&(^>2.rDGW'
+  #NONCE_SALT:       'ay)${bFV=F1KH[`NZ+W+Zk?Hc:@}jN}Ec)+Zn[F1fyP,mwi|@tk/(1hdp[G2F%os'
+
+
+production:
+  DB_NAME: production_database_name
+  DB_USER: some_user
+  DB_PASSWORD: their_password
+  DB_HOST: lovelett.me
+  DB_CHARSET: utf8
+  DB_COLLATE: ''
+
+  # Authentication Unique Keys and Salts
+  # https://api.wordpress.org/secret-key/1.1/salt/
+  # If no salts are supplied they will be generated automatically
+  #AUTH_KEY:         '*oH{(q=`tIzdNJKUk$XfHNNjKd$W=f$S`CtD.,;x0R}$/A,}]!+q0>>QfB#.Bsw]'
+  #SECURE_AUTH_KEY:  '{yg|7Q*j-?$%`b|Z!+5U,pvM,eA0+$/ruprp.mO[;|fExU:n0,-!at0+3UY@;h`X'
+  #LOGGED_IN_KEY:    'k]N 9I<-rZq#k Xg)IPhv$E*ktbD7Z_AtI){U;(P;0r#LJlYncEr%8v9tG`>BHU+'
+  #NONCE_KEY:        ' /w9->::-YB Xa#lf%TPH+cIf?]Ru4OfKGF2h8PHsa)2,n-~kRJ<[slUg<GZ Asx'
+  #AUTH_SALT:        'VYwGGP,#|9P[5RCUTdv2c8)`^{dotU0fWrU`JE9qq^n=F4//e)fCs<HF6sd>~yjW'
+  #SECURE_AUTH_SALT: 'ok}@vSs=n6%_%UCO|&[?Jc;,-,.#Q3}zR4ej%IoAL7RavTN/Xe,UrQ4)p}onRie0'
+  #LOGGED_IN_SALT:   'Z!,C*:Q_I9A`[pJm-b0Z/(Gm2qvK8>0~| T&)lM+sxG.OdEmgHbAGF&(^>2.rDGW'
+  #NONCE_SALT:       'ay)${bFV=F1KH[`NZ+W+Zk?Hc:@}jN}Ec)+Zn[F1fyP,mwi|@tk/(1hdp[G2F%os'

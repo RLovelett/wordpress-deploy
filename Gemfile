@@ -1,7 +1,4 @@
-# encoding: utf-8
+source 'https://rubygems.org'
 
-# RubyGems Source
-source 'http://rubygems.org'
-
-# Include gem dependencies from the gemspec for development purposes
+# Specify your gem's dependencies in daavtest.gemspec
 gemspec

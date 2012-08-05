@@ -3,7 +3,7 @@ require File.expand_path('../lib/wordpress_deploy/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Ryan Lovelett"]
-  gem.email         = ["ryan@wahvee.com"]
+  gem.email         = ["ryan@lovelett.me"]
   gem.description   = %q{Used to deploy a Wordpress site.}
   gem.summary       = %q{}
   gem.homepage      = %q{https://github.com/RLovelett/jsb3}
@@ -15,10 +15,12 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = WordpressDeploy::VERSION
 
-  gem.add_dependency 'thor',       ['~> 0.14.6']
-  gem.add_dependency 'open4',      ['~> 1.3.0']
-  gem.add_dependency 'actionpack', ['~> 3.2.6']
-  gem.add_dependency 'colorize',   ['~> 0.5.8']
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "rspec"
+  ##
+  # Gem dependencies
+  gem.add_dependency 'thor',     ['~> 0.15.4']
+  gem.add_dependency 'colorize', ['~> 0.5.8']
+  gem.add_dependency 'os',       ['~> 0.9.4']
+  gem.add_dependency 'titleize', ['~> 1.2.1']
+
+  gem.add_development_dependency 'rspec', ['~> 2.11.0']
 end

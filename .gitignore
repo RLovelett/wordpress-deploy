@@ -19,4 +19,6 @@ doc/
 
 # Mac files
 .DS_Store
-pkg/*
+
+# Spec data made during tests
+spec/data/wp-config.php
