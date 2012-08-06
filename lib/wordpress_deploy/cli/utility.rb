@@ -33,10 +33,22 @@ module WordpressDeploy
         # Set environment options
         Environment.set_options options
       rescue => err
+        Logger.error Errors::Cli::Utility::Error.wrap(err)
+
         # Exit with an error
         exit(1)
       end
 
+      desc "mirror", "Mirror database between two locations"
+      def mirror(from, to)
+        # Set environment options
+        Environment.set_options options
+      rescue => err
+        Logger.error Errors::Cli::Utility::Error.wrap(err)
+
+        # Exit with an error
+        exit(1)
+      end
     end
   end
 end
