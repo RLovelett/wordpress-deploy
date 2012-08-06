@@ -1,4 +1,6 @@
 require "thor"
+require "open3"
+require "fileutils"
 
 module WordpressDeploy
   ##
@@ -11,6 +13,7 @@ module WordpressDeploy
   DATABASE_PATH           = File.join(LIBRARY_PATH, 'database')
 
   module Cli
+    autoload :Helpers, File.join(CLI_PATH, 'helpers')
     autoload :Utility, File.join(CLI_PATH, 'utility')
   end
 
