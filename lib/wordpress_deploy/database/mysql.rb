@@ -120,14 +120,38 @@ module WordpressDeploy
         @prefix
       end
 
-      def mysqldump
-        "#{utility("mysqldump")} #{arguments}"
+      ##
+      # The file that the instance would save to if
+      # save is called.
+      def file
+        File.join(Config.sql_dir, "#{name}.sql")
+      end
+
+      ##
+      # Save the database to a file locally.
+      #
+      # The database will be output into #file.
+      def save!
+        # Get the output from MySQL Dump
+        cmd = mysqldump
+        dump_str = run cmd
+
+        # Open the supplied file; or create a temporary one
+        file_io = File.new(file, 'w')
+
+        # Start writing to file
+        file_io.write(dump_str)
+
+        true
+      ensure
+        file_io.close unless file_io.nil?
       end
 
       private
 
-      def arguments
-        "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p#{password} -B \"#{name}\""
+      def mysqldump
+        arguments = "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p\"#{password}\" -B \"#{name}\""
+        "#{utility("mysqldump")} #{arguments}"
       end
 
       ##
