@@ -1,11 +1,22 @@
 require 'spec_helper'
 
+include WordpressDeploy
 include WordpressDeploy::Database
 
 describe MySql do
   it { should respond_to :run }
   it { should respond_to :utility }
   it { should respond_to :command_name }
+
+  context "development Environment" do
+    before(:each) { Environment.environment = "development" }
+    its(:arguments) { should eq "-P \"3306\" -h \"NOT_localhost\" -u \"root\" -ptemp -B \"developer_database_name\"" }
+  end
+
+  context "production Environment" do
+    before(:each) { Environment.environment = "production" }
+    its(:arguments) { should eq "-P \"6654\" -h \"lovelett.me\" -u \"some_user\" -ptheir_password -B \"production_database_name\"" }
+  end
 
   context "find commands" do
     it "should raise Errors::Cli::UtilityNotFoundError if no command given" do
