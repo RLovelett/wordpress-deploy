@@ -5,8 +5,8 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Ryan Lovelett"]
   gem.email         = ["ryan@lovelett.me"]
   gem.description   = %q{Used to deploy a Wordpress site.}
-  gem.summary       = %q{}
-  gem.homepage      = %q{https://github.com/RLovelett/jsb3}
+  gem.summary       = %q{Wordpress Deploy is a RubyGem, written for Linux and Mac OSX, that allows you to easily perform Wordpress deployment operations. It provides you with an elegant DSL in Ruby for modeling your deployments.}
+  gem.homepage      = %q{https://github.com/RLovelett/wordpress-deploy}
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
