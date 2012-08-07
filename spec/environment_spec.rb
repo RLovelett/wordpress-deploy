@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe WordpressDeploy::Environment do
-  subject { WordpressDeploy::Environment }
 
   it { should respond_to :set_options }
 

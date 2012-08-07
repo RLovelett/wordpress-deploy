@@ -4,7 +4,7 @@ module WordpressDeploy
   # output files. Specifically, the locations of the test
   # definitions, the locations of the test results, and
   # the locations of the build applications.
-  class Environment
+  module Environment
 
     ##
     # Setup required paths based on the given options
