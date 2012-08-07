@@ -10,6 +10,10 @@ module WordpressDeploy
         @yaml     = YAML.load_file(File.join(Environment.config_dir, "wp-config.yml"))
       end
 
+      def mysqldump
+        "#{utility("mysqldump")} #{arguments}"
+      end
+
       private
 
       def environment
