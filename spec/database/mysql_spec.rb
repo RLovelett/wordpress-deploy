@@ -57,4 +57,9 @@ describe MySql do
       WordpressDeploy::Database::MySql::UTILITY["mysql"].should eq mysql
     end
   end
+
+  it "should parse out the command name" do
+    subject.command_name("#{mysqldump} -P \"3306\" -h \"NOT_localhost\" -u \"root\" -ptemp -B \"developer_database_name\"").should eq "mysqldump"
+  end
+
 end
