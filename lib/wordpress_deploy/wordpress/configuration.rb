@@ -3,12 +3,45 @@ module WordpressDeploy
 
     class Configuration
 
-      def initialize
+      attr_accessor :available_names
+      alias :names :available_names
+
+      def initialize(config_name=nil)
         @template = File.join(Environment.wp_dir, "wp-config-sample.php")
         @output   = File.join(Environment.wp_dir, "wp-config.php")
 
-        @yaml     = YAML.load_file(File.join(Environment.config_dir, "wp-config.yml"))
-        @environment = @yaml[Environment.environment]
+        @yaml             = YAML.load_file(File.join(Environment.config_dir, "wp-config.yml"))
+        @available_names  = @yaml.map { |key, val| key }
+
+        self.name = config_name unless config_name.nil?
+      end
+
+      ##
+      # Return the configuration's name.
+      #
+      # Defaults to the first configuration name.
+      def name
+        @name ||= available_names.first
+        @name
+      end
+
+      ##
+      # Set the configuration's name.
+      #
+      # Only performs the assignment if the proposed name is
+      # an available name.
+      #
+      # Returns the Configuration's name.
+      def name=(new_name)
+        @name = new_name if name? new_name
+        @name
+      end
+
+      ##
+      # Test if the name passed in is an available configuration
+      # name.
+      def name?(name_to_check)
+        available_names.include? name_to_check
       end
 
       ##
@@ -82,7 +115,8 @@ module WordpressDeploy
         method_symbol = meth.to_sym
 
         if WP_CONFIGURATION_ATTRIBUTES.include? method_symbol
-          return @environment[meth.to_s] if @environment.has_key? meth.to_s
+          config = @yaml[name]
+          return config[meth.to_s] if config.include? meth.to_s
           ""
         elsif WP_CONFIGURATION_SALTS.include? method_symbol
           # Return salt if the method is a salting method

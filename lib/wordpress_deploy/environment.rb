@@ -24,19 +24,6 @@ module WordpressDeploy
       end
     end
 
-    def self.environment=(new_environment)
-      if new_environment =~ /^p(roduction)?/i
-        @@environment = "production"
-      else
-        @@environment = "development"
-      end
-    end
-
-    def self.environment
-      @@environment ||= "development"
-      @@environment
-    end
-
     def self.logging?
       @@logging ||= false
       @@logging

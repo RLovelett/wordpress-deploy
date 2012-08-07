@@ -23,7 +23,6 @@ RSpec.configure do |config|
     WordpressDeploy::Environment.wp_dir      = "."
     WordpressDeploy::Environment.config_dir  = "."
     WordpressDeploy::Environment.logging     = false
-    WordpressDeploy::Environment.environment = "development"
   end
 
   # Clean-up log files after each spec
