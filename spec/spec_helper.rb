@@ -8,7 +8,14 @@ def data_dir
 end
 
 RSpec.configure do |config|
-  # Optional configuration here
+  # == Mock Framework
+  #
+  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
+  #
+  # config.mock_with :mocha
+  # config.mock_with :flexmock
+  # config.mock_with :rr
+  config.mock_with :rspec
 
   # Reset the environment for each spec that is run
   config.before(:each) do
