@@ -37,7 +37,7 @@ describe WordpressDeploy::Wordpress::Configuration do
     its(:DB_NAME)          { should eq "developer_database_name" }
     its(:DB_USER)          { should eq "root" }
     its(:DB_PASSWORD)      { should eq "temp" }
-    its(:DB_HOST)          { should eq "localhost" }
+    its(:DB_HOST)          { should eq "NOT_localhost" }
     its(:DB_CHARSET)       { should eq "utf8" }
     its(:DB_COLLATE)       { should eq "" }
     its(:WPLANG)           { should eq "" }

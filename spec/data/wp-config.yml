@@ -2,7 +2,7 @@ development:
   DB_NAME: developer_database_name
   DB_USER: root
   DB_PASSWORD: temp
-  DB_HOST: localhost
+  DB_HOST: NOT_localhost
   DB_CHARSET: utf8
   DB_COLLATE: ''
 
@@ -23,7 +23,7 @@ production:
   DB_NAME: production_database_name
   DB_USER: some_user
   DB_PASSWORD: their_password
-  DB_HOST: lovelett.me
+  DB_HOST: lovelett.me:6654
   DB_CHARSET: utf8
   DB_COLLATE: ''
 
