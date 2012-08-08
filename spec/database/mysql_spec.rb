@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-include WordpressDeploy
 include WordpressDeploy::Database
+include WordpressDeploy::Wordpress
 
 describe MySql do
 
@@ -12,23 +12,51 @@ describe MySql do
   it { should respond_to :utility }
   it { should respond_to :command_name }
   it { should respond_to :mysqldump }
+  it { should respond_to :configuration }
+  it { should respond_to :configuration= }
 
-  context "development Environment" do
+  shared_examples "command based on configuration" do
     before(:each) do
-      Environment.environment = "development"
+      subject.configuration = Configuration.new name
       subject.stub(:utility).with("mysqldump").and_return(mysqldump)
     end
-    its(:arguments) { should eq "-P \"3306\" -h \"NOT_localhost\" -u \"root\" -ptemp -B \"developer_database_name\"" }
-    its(:mysqldump) { should eq "#{mysqldump} -P \"3306\" -h \"NOT_localhost\" -u \"root\" -ptemp -B \"developer_database_name\"" }
+    its(:arguments) { should eq expected_args }
+    its(:mysqldump) { should eq "#{mysqldump} #{expected_args}" }
   end
 
-  context "production Environment" do
-    before(:each) do
-      Environment.environment = "production"
-      subject.stub(:utility).with("mysqldump").and_return(mysqldump)
+  context "when configuration is 'development'" do
+    it_should_behave_like "command based on configuration" do
+      let(:name) { "development" }
+      let(:expected_args) { "-P \"3306\" -h \"localhost\" -u \"root\" -pq9&hu6Re_*dReWr_GAba_2wr89#2Ra8$ -B \"developer_database_name\"" }
     end
-    its(:arguments) { should eq "-P \"6654\" -h \"lovelett.me\" -u \"some_user\" -ptheir_password -B \"production_database_name\"" }
-    its(:mysqldump) { should eq "#{mysqldump} -P \"6654\" -h \"lovelett.me\" -u \"some_user\" -ptheir_password -B \"production_database_name\"" }
+  end
+
+  context "when configuration is 'production'" do
+    it_should_behave_like "command based on configuration" do
+      let(:name) { "production" }
+      let(:expected_args) { "-P \"6654\" -h \"abbott.biz\" -u \"some_user\" -ptrecuwawraJaZe6P@kucraDrachustUq -B \"production_database_name\"" }
+    end
+  end
+
+  context "when configuration is 'red'" do
+    it_should_behave_like "command based on configuration" do
+      let(:name) { "red" }
+      let(:expected_args) { "-P \"3306\" -h \"hanerutherford.biz\" -u \"red_user\" -pBun__huPEMeBreM6tebRAp@eguzuQExe -B \"red\"" }
+    end
+  end
+
+  context "when configuration is 'green'" do
+    it_should_behave_like "command based on configuration" do
+      let(:name) { "green" }
+      let(:expected_args) { "-P \"3306\" -h \"yundt.org\" -u \"domenick.dare\" -pDaw&HEWuzaz6sa&epHech_spAKucHaTH -B \"green\"" }
+    end
+  end
+
+  context "when configuration is 'blue'" do
+    it_should_behave_like "command based on configuration" do
+      let(:name) { "blue" }
+      let(:expected_args) { "-P \"3306\" -h \"torphagenes.com\" -u \"harrison\" -pw5@reba?9?pepuk7w9a#H86ustaGawE! -B \"blue\"" }
+    end
   end
 
   context "find commands" do

@@ -63,6 +63,32 @@ module WordpressDeploy
         @output
       end
 
+      def port
+        port = 3306
+        match = /:(?<port>\d+)$/.match(send(:DB_HOST))
+        port = match[:port].to_i unless match.nil?
+        port
+      end
+
+      def port?
+        send(:DB_HOST) =~ /:(?<port>\d+)$/
+      end
+
+      def host
+        host = "localhost"
+        match = /(?<host>.*?)(?=:|$)/.match(send(:DB_HOST))
+        host = match[:host].to_s unless match.nil?
+        host
+      end
+
+      def socket
+
+      end
+
+      def socket?
+
+      end
+
       ##
       # Write the file the filesystem
       def save!
