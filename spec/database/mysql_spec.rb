@@ -17,7 +17,7 @@ describe MySql do
 
   shared_examples "command based on configuration" do
     before(:each) do
-      subject.configuration = Configuration.new name
+      subject.configuration = WordpressDeploy::Wordpress::Configuration.new name
       subject.stub(:utility).with("mysqldump").and_return(mysqldump)
     end
     its(:arguments) { should eq expected_args }
