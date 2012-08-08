@@ -3,6 +3,8 @@ Wordpress Deploy [![Build Status](https://secure.travis-ci.org/RLovelett/wordpre
 
 Wordpress Deploy is a RubyGem, written for Linux and Mac OSX, that allows you to easily perform Wordpress deployment operations. It provides you with an elegant DSL in Ruby for modeling your deployments.
 
+[Relocate Method](http://codex.wordpress.org/Changing_The_Site_URL#Relocate_method)
+
 Author
 ------
 
