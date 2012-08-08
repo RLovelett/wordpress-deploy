@@ -49,11 +49,11 @@ describe WordpressDeploy::Wordpress::Configuration do
 
   it "should only allow configuration names found in the yaml file" do
     ["production", "development", "red", "green", "blue"].each do |name|
-      (subject.name = name).should eq name
+      subject.name = name
       subject.name.should eq name
     end
     [:production, nil].each do |name|
-      (subject.name = name).should_not eq name
+      subject.name = name
       subject.name.should_not eq name
     end
   end
