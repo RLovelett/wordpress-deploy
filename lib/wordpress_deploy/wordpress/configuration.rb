@@ -63,6 +63,9 @@ module WordpressDeploy
         @output
       end
 
+      ##
+      # Extract just the port number from the DB_HOST
+      # configuration file. Or return the default port of 3306.
       def port
         port = 3306
         match = /:(?<port>\d+)$/.match(send(:DB_HOST))
@@ -70,10 +73,15 @@ module WordpressDeploy
         port
       end
 
+      ##
+      # Does DB_HOST contain a port number?
       def port?
-        send(:DB_HOST) =~ /:(?<port>\d+)$/
+        !(send(:DB_HOST) =~ /:(?<port>\d+)$/).nil?
       end
 
+      ##
+      # Get just the hostname from DB_HOST. Only different from
+      # DB_HOST if DB_HOST has a socket or a port number in it.
       def host
         host = "localhost"
         match = /(?<host>.*?)(?=:|$)/.match(send(:DB_HOST))
@@ -81,12 +89,20 @@ module WordpressDeploy
         host
       end
 
+      ##
+      # Extract just the socket part from the DB_HOST
+      # configuration file. Or return an empty string if none.
       def socket
-
+        socket = ""
+        match = /:(?<socket>\/.*)$/.match(send(:DB_HOST))
+        socket = match[:socket].to_s unless match.nil?
+        socket
       end
 
+      ##
+      # Does DB_HOST contain a socket path?
       def socket?
-
+        !(send(:DB_HOST) =~ /:(?<socket>\/.*)$/).nil?
       end
 
       ##

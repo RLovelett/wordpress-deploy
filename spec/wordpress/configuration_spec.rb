@@ -8,6 +8,11 @@ describe WordpressDeploy::Wordpress::Configuration do
   it { should respond_to :template }
   it { should respond_to :output }
   it { should respond_to :save! }
+  it { should respond_to :port }
+  it { should respond_to :port? }
+  it { should respond_to :host }
+  it { should respond_to :socket }
+  it { should respond_to :socket? }
 
   it { should respond_to :DB_NAME }
   it { should respond_to :DB_USER }
@@ -77,6 +82,11 @@ describe WordpressDeploy::Wordpress::Configuration do
     its(:SECURE_AUTH_SALT) { should be_salt }
     its(:LOGGED_IN_SALT)   { should be_salt }
     its(:NONCE_SALT)       { should be_salt }
+    its(:port)             { should eq port_num }
+    its(:port?)            { should eq has_port }
+    its(:host)             { should eq host }
+    its(:socket)           { should eq socket }
+    its(:socket?)          { should eq has_socket }
   end
 
   context "development" do
@@ -89,6 +99,11 @@ describe WordpressDeploy::Wordpress::Configuration do
       let(:db_charset)       { "utf8" }
       let(:db_collate)       { "" }
       let(:wplang)           { "" }
+      let(:port_num)         { 3306 }
+      let(:has_port)         { false }
+      let(:host)             { "localhost" }
+      let(:socket)           { "" }
+      let(:has_socket)       { false }
     end
   end
 
@@ -102,6 +117,11 @@ describe WordpressDeploy::Wordpress::Configuration do
       let(:db_charset)       { "utf8" }
       let(:db_collate)       { "" }
       let(:wplang)           { "" }
+      let(:port_num)         { 6654 }
+      let(:has_port)         { true }
+      let(:host)             { "abbott.biz" }
+      let(:socket)           { "" }
+      let(:has_socket)       { false }
     end
   end
 
@@ -115,6 +135,11 @@ describe WordpressDeploy::Wordpress::Configuration do
       let(:db_charset)       { "utf8" }
       let(:db_collate)       { "" }
       let(:wplang)           { "" }
+      let(:port_num)         { 3306 }
+      let(:has_port)         { false }
+      let(:host)             { "hanerutherford.biz" }
+      let(:socket)           { "" }
+      let(:has_socket)       { false }
     end
   end
   
@@ -128,6 +153,11 @@ describe WordpressDeploy::Wordpress::Configuration do
       let(:db_charset)       { "utf8" }
       let(:db_collate)       { "" }
       let(:wplang)           { "" }
+      let(:port_num)         { 3306 }
+      let(:has_port)         { false }
+      let(:host)             { "yundt.org" }
+      let(:socket)           { "" }
+      let(:has_socket)       { false }
     end
   end
 
@@ -141,6 +171,11 @@ describe WordpressDeploy::Wordpress::Configuration do
       let(:db_charset)       { "utf8" }
       let(:db_collate)       { "" }
       let(:wplang)           { "" }
+      let(:port_num)         { 3306 }
+      let(:has_port)         { false }
+      let(:host)             { "torphagenes.com" }
+      let(:socket)           { "/tmp/mysql5.sock" }
+      let(:has_socket)       { true }
     end
   end
 
