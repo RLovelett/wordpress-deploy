@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'os',       ['~> 0.9.4']
   gem.add_dependency 'titleize', ['~> 1.2.1']
 
-  gem.add_development_dependency 'rake',  ['~> 0.9.2.2']
-  gem.add_development_dependency 'rspec', ['~> 2.11.0']
+  gem.add_development_dependency 'rake',        ['~> 0.9.2.2']
+  gem.add_development_dependency 'rspec',       ['~> 2.11.0']
+  gem.add_development_dependency 'guard-rspec', ['~> 1.2.1']
 end
