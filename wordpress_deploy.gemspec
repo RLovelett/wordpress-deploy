@@ -17,10 +17,11 @@ Gem::Specification.new do |gem|
 
   ##
   # Gem dependencies
-  gem.add_dependency 'thor',     ['~> 0.15.4']
-  gem.add_dependency 'colorize', ['~> 0.5.8']
-  gem.add_dependency 'os',       ['~> 0.9.4']
-  gem.add_dependency 'titleize', ['~> 1.2.1']
+  gem.add_dependency 'thor',       ['~> 0.15.4']
+  gem.add_dependency 'colorize',   ['~> 0.5.8']
+  gem.add_dependency 'os',         ['~> 0.9.4']
+  gem.add_dependency 'titleize',   ['~> 1.2.1']
+  gem.add_dependency 'actionpack', ['~> 3.2.6']
 
   gem.add_development_dependency 'rake',        ['~> 0.9.2.2']
   gem.add_development_dependency 'rspec',       ['~> 2.11.0']
