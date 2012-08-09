@@ -6,6 +6,12 @@ development:
   DB_CHARSET: utf8
   DB_COLLATE: ''
 
+  # FTP Transfer settings
+  FTP_HOST: localhost
+  FTP_USER: root
+  FTP_PASSWORD: q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$
+  FTP_DIR: /wordpress
+
   # Authentication Unique Keys and Salts
   # https://api.wordpress.org/secret-key/1.1/salt/
   # If no salts are supplied they will be generated automatically
@@ -25,6 +31,11 @@ production:
   DB_HOST: abbott.biz:6654
   DB_CHARSET: utf8
   DB_COLLATE: ''
+
+  # FTP Transfer settings
+  FTP_HOST: ftp.abbott.biz:6654
+  FTP_USER: some_user
+  FTP_PASSWORD: trecuwawraJaZe6P@kucraDrachustUq
 
   # Authentication Unique Keys and Salts
   # https://api.wordpress.org/secret-key/1.1/salt/
@@ -46,6 +57,12 @@ red:
   DB_CHARSET: utf8
   DB_COLLATE: ''
 
+  # FTP Transfer settings
+  FTP_HOST: ftp.hanerutherford.biz
+  FTP_USER: red_user
+  FTP_PASSWORD: Bun__huPEMeBreM6tebRAp@eguzuQExe
+  FTP_DIR: /html
+
   # Authentication Unique Keys and Salts
   # https://api.wordpress.org/secret-key/1.1/salt/
   # If no salts are supplied they will be generated automatically
@@ -66,6 +83,12 @@ green:
   DB_CHARSET: utf8
   DB_COLLATE: ''
 
+  # FTP Transfer settings
+  FTP_HOST: ftp.yundt.org
+  FTP_USER: domenick.dare
+  FTP_PASSWORD: Daw&HEWuzaz6sa&epHech_spAKucHaTH
+  FTP_DIR: /wordpress
+
   # Authentication Unique Keys and Salts
   # https://api.wordpress.org/secret-key/1.1/salt/
   # If no salts are supplied they will be generated automatically
@@ -85,6 +108,12 @@ blue:
   DB_HOST: torphagenes.com:/tmp/mysql5.sock
   DB_CHARSET: utf8
   DB_COLLATE: ''
+
+  # FTP Transfer settings
+  FTP_HOST: ftp.torphagenes.com
+  FTP_USER: harrison
+  FTP_PASSWORD: w5@reba?9?pepuk7w9a#H86ustaGawE!
+  FTP_DIR: /wordpress
 
   # Authentication Unique Keys and Salts
   # https://api.wordpress.org/secret-key/1.1/salt/
