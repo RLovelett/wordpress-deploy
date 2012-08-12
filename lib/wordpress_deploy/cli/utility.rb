@@ -10,9 +10,15 @@ module WordpressDeploy
       class_option :root_dir,    type: :string,  default: '',           aliases: '-r'
       class_option :wp_dir,      type: :string,  default: '',           aliases: '-w'
       class_option :environment, type: :string,  default: 'production', aliases: '-e'
+      class_option :verbose,     type: :boolean, default: false,        aliases: '-v'
+
 
       desc "generate", "Generate the wp-config.php file. Accepted environments are production or development."
       def generate
+        ##
+        # Set Logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
         # Set environment options
         Environment.set_options options
 
@@ -30,6 +36,10 @@ module WordpressDeploy
 
       desc "deploy", "Deploy via FTP to configuration hostname."
       def deploy
+        ##
+        # Set Logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
         # Set environment options
         Environment.set_options options
       rescue => err
@@ -41,6 +51,10 @@ module WordpressDeploy
 
       desc "mirror", "Mirror database between two locations"
       def mirror(from, to)
+        ##
+        # Set Logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
         # Set environment options
         Environment.set_options options
       rescue => err
