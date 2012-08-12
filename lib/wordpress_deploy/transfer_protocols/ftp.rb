@@ -144,10 +144,6 @@ module WordpressDeploy
 
       private
 
-      def local_path
-        Environment.wp_dir
-      end
-
       ##
       # Establish a connection to the remote server
       def connect
