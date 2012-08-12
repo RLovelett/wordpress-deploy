@@ -28,6 +28,7 @@ RSpec.configure do |config|
     WordpressDeploy::Config.root_dir    = data_dir
     WordpressDeploy::Config.wp_dir      = "."
     WordpressDeploy::Config.config_dir  = "."
+    WordpressDeploy::Config.sql_dir     = "."
     WordpressDeploy::Config.logging     = false
   end
 

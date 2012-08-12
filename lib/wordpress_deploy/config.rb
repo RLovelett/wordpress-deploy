@@ -56,6 +56,15 @@ module WordpressDeploy
       File.expand_path File.join(root_dir, @@wp_dir)
     end
 
+    def self.sql_dir=(new_sql_dir)
+      @@sql_dir = new_sql_dir
+    end
+
+    def self.sql_dir
+      @@sql_dir ||= "sql"
+      File.expand_path File.join(root_dir, @@sql_dir)
+    end
+
     def self.log_file
       @@log_file ||= "#{Time.now.strftime("%Y_%m_%d_%H_%M_%S")}.log"
       File.expand_path File.join(root_dir, @@log_file)

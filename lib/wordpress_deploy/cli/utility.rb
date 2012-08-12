@@ -10,6 +10,7 @@ module WordpressDeploy
       class_option :root_dir,    type: :string,  default: '',           aliases: '-r'
       class_option :wp_dir,      type: :string,  default: '',           aliases: '-w'
       class_option :config_dir,  type: :string,  default: '',           aliases: '-c'
+      class_option :sql_dir,     type: :string,  default: '',           aliases: '-s'
       class_option :verbose,     type: :boolean, default: false,        aliases: '-v'
 
       desc "config ENVIRONMENT", "Generate the wp-config.php file for the specified environment."
