@@ -14,13 +14,7 @@ module WordpressDeploy
       private
 
       def arguments
-        host = configuration.host
-        port = configuration.port
-        username = configuration.DB_USER
-        password = configuration.DB_PASSWORD
-        db_name = configuration.DB_NAME
-
-        "-P \"#{port}\" -h \"#{host}\" -u \"#{username}\" -p#{password} -B \"#{db_name}\""
+        "-P \"#{db_port}\" -h \"#{db_hostname}\" -u \"#{self.DB_USER}\" -p#{self.DB_PASSWORD} -B \"#{self.DB_NAME}\""
       end
 
       ##

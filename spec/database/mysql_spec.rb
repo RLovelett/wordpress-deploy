@@ -12,12 +12,12 @@ describe MySql do
   it { should respond_to :utility }
   it { should respond_to :command_name }
   it { should respond_to :mysqldump }
-  it { should respond_to :configuration }
-  it { should respond_to :configuration= }
+
+  it_should_behave_like "Wordpress::ConfigurationFile mixin"
 
   shared_examples "command based on configuration" do
     before(:each) do
-      subject.configuration = WordpressDeploy::Wordpress::Configuration.new name
+      subject.name = name
       subject.stub(:utility).with("mysqldump").and_return(mysqldump)
     end
     its(:arguments) { should eq expected_args }

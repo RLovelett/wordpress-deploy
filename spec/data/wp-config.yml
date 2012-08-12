@@ -33,7 +33,7 @@ production:
   DB_COLLATE: ''
 
   # FTP Transfer settings
-  FTP_HOST: ftp.abbott.biz:6654
+  FTP_HOST: ftp.abbott.biz:6655
   FTP_USER: some_user
   FTP_PASSWORD: trecuwawraJaZe6P@kucraDrachustUq
 
