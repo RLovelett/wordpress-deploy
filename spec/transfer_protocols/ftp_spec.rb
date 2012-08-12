@@ -4,7 +4,14 @@ include WordpressDeploy
 
 describe WordpressDeploy::TransferProtocols::Ftp do
   before(:each) do
-    Net::FTP.stub(:new)
+    # None of the methods that follow are testing
+    # the Net::FTP object actions; therefore they
+    # can be stubbed out
+    @ftp = double("ftp")
+    [:connect, :login, :passive=].each do |methods|
+      @ftp.stub(methods).with(any_args)
+    end
+    Net::FTP.stub(:new).and_return(@ftp)
   end
 
   it { should respond_to :name }
