@@ -18,11 +18,9 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   it { should respond_to :name= }
   it { should respond_to :available_names }
   it { should respond_to :names }
-  it { should respond_to :port }
-  it { should respond_to :port? }
-  it { should respond_to :host }
-  it { should respond_to :configuration }
-  it { should respond_to :configuration= }
+  it { should respond_to :ftp_port }
+  it { should respond_to :ftp_port? }
+  it { should respond_to :ftp_hostname }
 
   it { should respond_to :FTP_USER }
   it { should respond_to :FTP_PASSWORD }
@@ -58,24 +56,24 @@ describe WordpressDeploy::TransferProtocols::Ftp do
     end
   end
 
-  shared_examples "ftp named configuration" do
+  shared_examples "Wordpress::ConfigurationFile mixin" do
     before(:each) { subject.name = name }
-    its(:name)         { should eq name }
-    its(:FTP_USER)     { should eq ftp_user }
-    its(:FTP_PASSWORD) { should eq ftp_password }
-    its(:FTP_HOST)     { should eq ftp_host }
-    its(:FTP_DIR)      { should eq ftp_dir_raw }
-    its(:local_path)   { should eq Environment.wp_dir }
-    its(:remote_path)  { should eq ftp_dir }
-    its(:username)     { should eq ftp_user }
-    its(:password)     { should eq ftp_password }
-    its(:host)         { should eq host }
-    its(:port)         { should eq port }
-    its(:port?)        { should eq has_port }
+    its(:name)            { should eq name }
+    its(:FTP_USER)        { should eq ftp_user }
+    its(:FTP_PASSWORD)    { should eq ftp_password }
+    its(:FTP_HOST)        { should eq ftp_host }
+    its(:FTP_DIR)         { should eq ftp_dir_raw }
+    its(:ftp_local_path)  { should eq Environment.wp_dir }
+    its(:ftp_remote_path) { should eq ftp_dir }
+    its(:ftp_username)    { should eq ftp_user }
+    its(:ftp_password)    { should eq ftp_password }
+    its(:ftp_hostname)    { should eq host }
+    its(:ftp_port)        { should eq port }
+    its(:ftp_port?)       { should eq has_port }
   end
 
   context "development" do
-    it_should_behave_like "ftp named configuration" do
+    it_should_behave_like "Wordpress::ConfigurationFile mixin" do
       let(:name)         { "development" }
       let(:ftp_user)     { "root" }
       let(:ftp_password) { "q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$" }
@@ -89,7 +87,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   end
 
   context "production" do
-    it_should_behave_like "ftp named configuration" do
+    it_should_behave_like "Wordpress::ConfigurationFile mixin" do
       let(:name)         { "production" }
       let(:ftp_user)     { "some_user" }
       let(:ftp_password) { "trecuwawraJaZe6P@kucraDrachustUq" }
@@ -103,7 +101,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   end
 
   context "red" do
-    it_should_behave_like "ftp named configuration" do
+    it_should_behave_like "Wordpress::ConfigurationFile mixin" do
       let(:name)         { "red" }
       let(:ftp_user)     { "red_user" }
       let(:ftp_password) { "Bun__huPEMeBreM6tebRAp@eguzuQExe" }
@@ -117,7 +115,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   end
 
   context "green" do
-    it_should_behave_like "ftp named configuration" do
+    it_should_behave_like "Wordpress::ConfigurationFile mixin" do
       let(:name)         { "green" }
       let(:ftp_user)     { "domenick.dare" }
       let(:ftp_password) { "Daw&HEWuzaz6sa&epHech_spAKucHaTH" }
@@ -131,7 +129,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   end
 
   context "blue" do
-    it_should_behave_like "ftp named configuration" do
+    it_should_behave_like "Wordpress::ConfigurationFile mixin" do
       let(:name)         { "blue" }
       let(:ftp_user)     { "harrison" }
       let(:ftp_password) { "w5@reba?9?pepuk7w9a#H86ustaGawE!" }

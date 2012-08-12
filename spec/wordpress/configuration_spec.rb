@@ -8,11 +8,11 @@ describe WordpressDeploy::Wordpress::Configuration do
   it { should respond_to :template }
   it { should respond_to :output }
   it { should respond_to :save! }
-  it { should respond_to :port }
-  it { should respond_to :port? }
-  it { should respond_to :host }
-  it { should respond_to :socket }
-  it { should respond_to :socket? }
+  it { should respond_to :db_port }
+  it { should respond_to :db_port? }
+  it { should respond_to :db_hostname }
+  it { should respond_to :db_socket }
+  it { should respond_to :db_socket? }
 
   it { should respond_to :DB_NAME }
   it { should respond_to :DB_USER }
@@ -82,11 +82,11 @@ describe WordpressDeploy::Wordpress::Configuration do
     its(:SECURE_AUTH_SALT) { should be_salt }
     its(:LOGGED_IN_SALT)   { should be_salt }
     its(:NONCE_SALT)       { should be_salt }
-    its(:port)             { should eq port_num }
-    its(:port?)            { should eq has_port }
-    its(:host)             { should eq host }
-    its(:socket)           { should eq socket }
-    its(:socket?)          { should eq has_socket }
+    its(:db_port)          { should eq port_num }
+    its(:db_port?)         { should eq has_port }
+    its(:db_hostname)      { should eq host }
+    its(:db_socket)        { should eq socket }
+    its(:db_socket?)       { should eq has_socket }
   end
 
   context "development" do

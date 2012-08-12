@@ -4,20 +4,11 @@ module WordpressDeploy
   module Database
 
     class MySql
+      include WordpressDeploy::ConfigurationFile
       include WordpressDeploy::Cli::Helpers
-
-      attr_reader :configuration
-
-      def initialize
-        @yaml     = YAML.load_file(File.join(Environment.config_dir, "wp-config.yml"))
-      end
 
       def mysqldump
         "#{utility("mysqldump")} #{arguments}"
-      end
-
-      def configuration=(new_config)
-        @configuration = new_config if new_config.instance_of? WordpressDeploy::Wordpress::Configuration
       end
 
       private
