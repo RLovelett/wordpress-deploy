@@ -208,6 +208,16 @@ RSpec.configure do |config|
         its(:SECURE_AUTH_SALT) { should be_salt }
         its(:LOGGED_IN_SALT)   { should be_salt }
         its(:NONCE_SALT)       { should be_salt }
+
+        its(:AUTH_KEY)         { should eq "*oH{(q=`tIzdNJKUk$XfHNNjKd$W=f$S`CtD.,;x0R}$/A,}]!+q0>>QfB#.Bsw]" }
+        its(:SECURE_AUTH_KEY)  { should eq "{yg|7Q*j-?$%`b|Z!+5U,pvM,eA0+$/ruprp.mO[;|fExU:n0,-!at0+3UY@;h`X" }
+        its(:LOGGED_IN_KEY)    { should eq "k]N 9I<-rZq#k Xg)IPhv$E*ktbD7Z_AtI){U;(P;0r#LJlYncEr%8v9tG`>BHU+" }
+        its(:NONCE_KEY)        { should eq " /w9->::-YB Xa#lf%TPH+cIf?]Ru4OfKGF2h8PHsa)2,n-~kRJ<[slUg<GZ Asx" }
+        its(:AUTH_SALT)        { should eq "VYwGGP,#|9P[5RCUTdv2c8)`^{dotU0fWrU`JE9qq^n=F4//e)fCs<HF6sd>~yjW" }
+        its(:SECURE_AUTH_SALT) { should eq "ok}@vSs=n6%_%UCO|&[?Jc;,-,.#Q3}zR4ej%IoAL7RavTN/Xe,UrQ4)p}onRie0" }
+        its(:LOGGED_IN_SALT)   { should eq "Z!,C*:Q_I9A`[pJm-b0Z/(Gm2qvK8>0~| T&)lM+sxG.OdEmgHbAGF&(^>2.rDGW" }
+        its(:NONCE_SALT)       { should eq "ay)${bFV=F1KH[`NZ+W+Zk?Hc:@}jN}Ec)+Zn[F1fyP,mwi|@tk/(1hdp[G2F%os" }
+
         its(:db_port)          { should eq 3306 }
         its(:db_port?)         { should eq false }
         its(:db_hostname)      { should eq "hanerutherford.biz" }
