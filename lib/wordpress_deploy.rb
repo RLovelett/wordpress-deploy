@@ -1,6 +1,7 @@
 require "thor"
 require "open3"
 require "fileutils"
+require "yaml"
 
 module WordpressDeploy
   ##
