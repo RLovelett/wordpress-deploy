@@ -90,6 +90,17 @@ module WordpressDeploy
 
         # Set environment options
         Environment.set_options options
+
+        # Save the 'from' database to the SQL directory
+        from_mysql = Database::MySql.new from
+        from_mysql.save!
+
+        # Send the 'from' database to the 'to' database
+        from_mysql.send! to
+
+        # Migrate the to database now on the 'to' database
+        # to have the proper strings and such
+        from_mysql.migrate! to
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
