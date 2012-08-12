@@ -31,6 +31,17 @@ module WordpressDeploy
         @configuration = new_config if new_config.instance_of? WordpressDeploy::Wordpress::Configuration
       end
 
+      ##
+      # If the connection is open, close it
+      # Returns true if the connection is closed; false otherwise
+      def close
+        unless ftp.closed?
+          ftp.close
+          return true
+        end
+        return false
+      end
+
       def transmit
         raise NotImplementedError
       end
