@@ -59,7 +59,43 @@ module WordpressDeploy
         raise NotImplementedError
       end
 
-      def receive!
+      def receive!(path=remote_path)
+        # Where did it start from
+        pwd = ftp.pwd
+
+        # Change to the remote path
+        chdir(path)
+
+        # Get a list of all the files
+        # and directories in the current pwd
+        files = ftp.nlst ftp.pwd
+
+        # Remove the 'dot' directories
+        files.delete(".")
+        files.delete("..")
+
+        # Create a relative pathname
+        rel_remote_path = Pathname.new(ftp.pwd).relative_path_from Pathname.new(remote_path)
+
+        # Loop through each file and directory
+        # found in the current pwd
+        files.each do |file|
+
+          # Build the file name to save it to
+          local_file = Pathname.new(File.join(Environment.wp_dir, rel_remote_path, File.basename(file))).cleanpath.to_s
+          if directory? file
+            Logger.debug "[mkdir] #{local_file}"
+            FileUtils.mkdir_p local_file
+            receive! file
+          else
+            str = "[cp] #{file} (#{self.number_to_human_size(ftp.size(file), precision: 2)})"
+            ftp.getbinaryfile(file, local_file)
+            Logger.debug str
+          end
+        end
+
+        # Return from whence we came
+        chdir(pwd)
 
       end
 

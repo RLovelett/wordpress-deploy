@@ -58,6 +58,30 @@ module WordpressDeploy
         puts "Closing connection.".colorize(color: :red, background: :yellow) if ftp_client.close
       end
 
+      desc "backup", "Pull down the remote files over FTP."
+      def backup
+        ##
+        # Set Logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
+        # Set environment options
+        Environment.set_options options
+
+        # Create a new FTP client for receiving the files
+        ftp_client = TransferProtocols::Ftp.new options[:environment]
+
+        # Now receive the files
+        ftp_client.receive!
+
+      rescue => err
+        Logger.error Errors::Cli::Utility::Error.wrap(err)
+
+        # Exit with an error
+        exit(1)
+      ensure
+        puts "Closing connection.".colorize(color: :red, background: :yellow) if ftp_client.close
+      end
+
       desc "mirror", "Mirror database between two locations"
       def mirror(from, to)
         ##
