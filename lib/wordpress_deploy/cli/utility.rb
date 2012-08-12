@@ -42,11 +42,20 @@ module WordpressDeploy
 
         # Set environment options
         Environment.set_options options
+
+        # Create a new FTP client for sending the files
+        ftp_client = TransferProtocols::Ftp.new options[:environment]
+
+        # Now transmit the files
+        ftp_client.transmit!
+
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
         # Exit with an error
         exit(1)
+      ensure
+        puts "Closing connection.".colorize(color: :red, background: :yellow) if ftp_client.close
       end
 
       desc "mirror", "Mirror database between two locations"
