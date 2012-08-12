@@ -11,7 +11,10 @@ describe MySql do
   it { should respond_to :run }
   it { should respond_to :utility }
   it { should respond_to :command_name }
-  it { should respond_to :mysqldump }
+  it { should respond_to :file }
+  it { should respond_to :save! }
+  it { should respond_to :send! }
+  it { should respond_to :migrate! }
 
   shared_examples "the environment is" do |env_name|
     before(:all) { WordpressDeploy::Environments.load }
@@ -28,6 +31,7 @@ describe MySql do
       its(:socket)   { should eq expected_socket }
       its(:port?)    { should eq has_port }
       its(:socket?)  { should eq has_socket }
+      its(:file)     { should =~ /#{expected_name}.sql$/ }
     end
   end
 
@@ -44,7 +48,7 @@ describe MySql do
     let(:has_port)               { false }
     let(:has_socket)             { false }
 
-    let(:expected_args) { "-P \"3306\" -h \"localhost\" -u \"root\" -pq9&hu6Re_*dReWr_GAba_2wr89#2Ra8$ -B \"developer_database_name\"" }
+    let(:expected_args) { "-P \"3306\" -h \"localhost\" -u \"root\" -p\"q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$\" -B \"developer_database_name\"" }
   end
 
   it_should_behave_like "the environment is", :production do
@@ -60,7 +64,7 @@ describe MySql do
     let(:has_port)               { true }
     let(:has_socket)             { false }
 
-    let(:expected_args) { "-P \"6654\" -h \"abbott.biz\" -u \"some_user\" -ptrecuwawraJaZe6P@kucraDrachustUq -B \"production_database_name\"" }
+    let(:expected_args) { "-P \"6654\" -h \"abbott.biz\" -u \"some_user\" -p\"trecuwawraJaZe6P@kucraDrachustUq\" -B \"production_database_name\"" }
   end
 
   it_should_behave_like "the environment is", :red do
@@ -76,7 +80,7 @@ describe MySql do
     let(:has_port)               { false }
     let(:has_socket)             { false }
 
-    let(:expected_args) { "-P \"3306\" -h \"hanerutherford.biz\" -u \"red_user\" -pBun__huPEMeBreM6tebRAp@eguzuQExe -B \"red\"" }
+    let(:expected_args) { "-P \"3306\" -h \"hanerutherford.biz\" -u \"red_user\" -p\"Bun__huPEMeBreM6tebRAp@eguzuQExe\" -B \"red\"" }
   end
 
   it_should_behave_like "the environment is", :green do
@@ -92,7 +96,7 @@ describe MySql do
     let(:has_port)               { false }
     let(:has_socket)             { false }
 
-    let(:expected_args) { "-P \"3306\" -h \"yundt.org\" -u \"domenick.dare\" -pDaw&HEWuzaz6sa&epHech_spAKucHaTH -B \"green\"" }
+    let(:expected_args) { "-P \"3306\" -h \"yundt.org\" -u \"domenick.dare\" -p\"Daw&HEWuzaz6sa&epHech_spAKucHaTH\" -B \"green\"" }
   end
 
   it_should_behave_like "the environment is", :blue do
@@ -108,38 +112,36 @@ describe MySql do
     let(:has_port)               { false }
     let(:has_socket)             { true }
 
-    let(:expected_args) { "-P \"3306\" -h \"torphagenes.com\" -u \"harrison\" -pw5@reba?9?pepuk7w9a#H86ustaGawE! -B \"blue\"" }
+    let(:expected_args) { "-P \"3306\" -h \"torphagenes.com\" -u \"harrison\" -p\"w5@reba?9?pepuk7w9a#H86ustaGawE!\" -B \"blue\"" }
   end
 
-  context "find commands" do
-    it "should raise Errors::Cli::UtilityNotFoundError if no command given" do
-      expect{subject.utility ""}.to raise_error(WordpressDeploy::Errors::Cli::UtilityNotFoundError)
+  context "dump the configuration's database to the local filesystem" do
+    let(:mysql_cmd) { "#{mysqldump} -P \"6654\" -h \"abbott.biz\" -u \"some_user\" -p\"trecuwawraJaZe6P@kucraDrachustUq\" -B \"production_database_name\"" }
+
+    before(:each) do
+      @mysql = WordpressDeploy::Environments.production.database
+      @mysql.should_receive(:utility).with("mysqldump").and_return(mysqldump)
+      @mysql.should_receive(:run).with(mysql_cmd).and_return("STDOUT from run")
     end
-    it "should raise Errors::Cli::UtilityNotFoundError if command not found" do
-      expect{subject.utility "missing_system_command"}.to raise_error(WordpressDeploy::Errors::Cli::UtilityNotFoundError)
+
+    it "should call the mysqldump command with the correct arguments" do
+      @mysql.save!
     end
-    it "mysql" do
-      stdin    = Object.new
-      stdin.stub(:close)
 
-      stdout   = Object.new.stub(:read).and_return("")
-      stdout.stub(:read).and_return(mysql)
+    it "should then save the output from STDOUT to a file" do
+      # Stub file behavior;
+      # expect to receive a call to new, write, and close
+      file = double("file")
+      File.should_receive(:new).with(/production_database_name.sql$/, 'w').and_return(file)
+      file.should_receive(:write).with("STDOUT from run")
+      file.should_receive(:close)
 
-      stderr   = Object.new.stub(:read).and_return("")
-      stderr.stub(:read).and_return("")
-
-      wait_thr = Object.new
-      wait_thr.stub(:value).and_return($?)
-
-      Open3.should_receive(:popen3).exactly(1).times.and_yield(stdin, stdout, stderr, wait_thr)
-
-      subject.utility("mysql").should eq mysql
-      WordpressDeploy::Database::MySql::UTILITY["mysql"].should eq mysql
+      @mysql.save!
     end
   end
 
-  it "should parse out the command name" do
-    subject.command_name("#{mysqldump} -P \"3306\" -h \"NOT_localhost\" -u \"root\" -ptemp -B \"developer_database_name\"").should eq "mysqldump"
+  context "send a dumped configuration's database to a remote database" do
+
   end
 
 end
