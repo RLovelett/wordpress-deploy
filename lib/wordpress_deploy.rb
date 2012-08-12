@@ -30,7 +30,7 @@ module WordpressDeploy
     autoload :MySql, File.join(DATABASE_PATH, 'mysql')
   end
 
-  %w{version logger errors environment}.each do |klass|
+  %w{version logger errors environment configuration_file}.each do |klass|
     require File.join(LIBRARY_PATH, klass)
   end
 end
