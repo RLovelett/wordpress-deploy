@@ -9,6 +9,7 @@ module WordpressDeploy
       # These options apply to all commands
       class_option :root_dir,    type: :string,  default: '',           aliases: '-r'
       class_option :wp_dir,      type: :string,  default: '',           aliases: '-w'
+      class_option :config_dir,  type: :string,  default: '',           aliases: '-c'
       class_option :verbose,     type: :boolean, default: false,        aliases: '-v'
 
 
