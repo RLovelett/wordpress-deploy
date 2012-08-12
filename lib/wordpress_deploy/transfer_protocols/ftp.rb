@@ -46,8 +46,13 @@ module WordpressDeploy
         raise NotImplementedError
       end
 
+      ##
+      #
       def transmit!
-
+        files = Dir.glob(File.join(Environment.wp_dir, "**/*")).sort
+        files.each do |file|
+          put_file file
+        end
       end
 
       def receive
@@ -155,24 +160,107 @@ module WordpressDeploy
 
       private
 
+      def ftp
+        @ftp ||= Net::FTP.new
+        @ftp
+      end
+
       ##
       # Establish a connection to the remote server
       def connect
+        ftp.connect(host, port)
+        ftp.login(username, password)
+        ftp.passive = true
+        # ftp.debug_mode = true
+        #chdir(remote_path)
+      end
 
-        # If the user defined a port
-        if port?
-          # Unset the FTP port number if it is defined
-          if Net::FTP.const_defined?(:FTP_PORT)
-            Net::FTP.send(:remove_const, :FTP_PORT)
-          end
+      ##
+      # Put file on remote machine
+      def put_file(real_path)
+        pn = Pathname.new(real_path)
+        relative = pn.relative_path_from Pathname.new(Environment.wp_dir)
 
-          # Set it to the user defined or default value
-          Net::FTP.send(:const_set, :FTP_PORT, port)
+        # Only try to send files; no directories
+        unless pn.directory?
+          local_directory, local_file_name = relative.split
+          remote_directory = Pathname.new("#{remote_path}/#{local_directory}").cleanpath.to_s
+
+          begin
+            # Make sure to be in the right directory
+            chdir remote_directory
+
+            # Now send the file (overwriting if it exists)
+            write_file(real_path, local_file_name.to_s, true)
+          rescue Net::FTPPermError; end
         end
+      end
 
-        # Now open the connection to the remote machine
-        @ftp = Net::FTP.new(host, username, password)
+      def write_file(local_file, remote_file_name, overwrite)
+        begin
+          str = "[cp] #{remote_file_name} (#{self.number_to_human_size(File.size(local_file), precision: 2)})"
+          ftp.putbinaryfile(local_file, remote_file_name)
+          Logger.debug str
+        rescue Net::FTPPermError => e
+          if ftp.last_response_code.to_i === 550 and overwrite
+            ftp.delete(remote_file_name)
+            ftp.putbinaryfile(real_path, remote_file_name)
+            Logger.debug "#{str} - OVERWRITING"
+          end
+        end
+      end
 
+      ##
+      # Check that directory path exists on the FTP site
+      def directory?(directory)
+        pwd = ftp.pwd
+        begin
+          ftp.chdir(directory)
+          return true
+        rescue Net::FTPPermError
+          return false
+        end
+      ensure
+        ftp.chdir pwd
+      end
+
+      ##
+      # Change the current working directory
+      def chdir(directory)
+        # If the current working directory does not
+        # match the current working directory then
+        # the directory must be changed
+        if ftp.pwd != directory
+          Logger.debug "[cd] #{directory}"
+          # Make the requested directory if it does not exist
+          mkdir(directory) unless directory?(directory)
+          # Change into the requested directory
+          ftp.chdir(directory)
+        end
+      end
+
+      ##
+      # Similar to mkdir -p.
+      # It will make all the full directory path specified on the FTP site
+      def mkdir(directory)
+        pwd = ftp.pwd
+        dirs = directory.split("/")
+        dirs.each do |dir|
+          begin
+            ftp.chdir(dir)
+          rescue Net::FTPPermError => e
+            if ftp.last_response_code.to_i === 550
+              Logger.debug "[mkdir] #{File.join(ftp.pwd, dir)}"
+              ftp.mkdir(dir)
+              ftp.chdir(dir)
+            end
+          end
+        end
+      ensure
+        # Make sure to return to the directory
+        # that was currently in use before the mkdir command
+        # was issued
+        ftp.chdir(pwd)
       end
 
     end
