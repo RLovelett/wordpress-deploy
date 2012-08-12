@@ -9,12 +9,11 @@ module WordpressDeploy
       # These options apply to all commands
       class_option :root_dir,    type: :string,  default: '',           aliases: '-r'
       class_option :wp_dir,      type: :string,  default: '',           aliases: '-w'
-      class_option :environment, type: :string,  default: 'production', aliases: '-e'
       class_option :verbose,     type: :boolean, default: false,        aliases: '-v'
 
 
-      desc "generate", "Generate the wp-config.php file. Accepted environments are production or development."
-      def generate
+      desc "generate", "Generate the wp-config.php file."
+      def generate(environment)
         ##
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
@@ -23,7 +22,7 @@ module WordpressDeploy
         Environment.set_options options
 
         # Create a configuration file
-        config = Wordpress::Configuration.new
+        config = Wordpress::Configuration.new environment
 
         # Save the configuration file
         config.save!
@@ -35,7 +34,7 @@ module WordpressDeploy
       end
 
       desc "deploy", "Deploy via FTP to configuration hostname."
-      def deploy
+      def deploy(environment)
         ##
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
@@ -44,7 +43,7 @@ module WordpressDeploy
         Environment.set_options options
 
         # Create a new FTP client for sending the files
-        ftp_client = TransferProtocols::Ftp.new options[:environment]
+        ftp_client = TransferProtocols::Ftp.new environment
 
         # Now transmit the files
         ftp_client.transmit!
@@ -59,7 +58,7 @@ module WordpressDeploy
       end
 
       desc "backup", "Pull down the remote files over FTP."
-      def backup
+      def backup(environment)
         ##
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
@@ -68,7 +67,7 @@ module WordpressDeploy
         Environment.set_options options
 
         # Create a new FTP client for receiving the files
-        ftp_client = TransferProtocols::Ftp.new options[:environment]
+        ftp_client = TransferProtocols::Ftp.new environment
 
         # Now receive the files
         ftp_client.receive!
