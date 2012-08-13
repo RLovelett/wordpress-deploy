@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'titleize',           ['~> 1.2.1']
   gem.add_dependency 'actionpack',         ['~> 3.2.6']
   gem.add_dependency 'php-serialize_ryan', ['~> 1.1.0']
+  gem.add_dependency 'mysql2',             ['~> 0.3.11']
 
   gem.add_development_dependency 'rake',        ['~> 0.9.2.2']
   gem.add_development_dependency 'rspec',       ['~> 2.11.0']
