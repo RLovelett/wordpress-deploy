@@ -3,6 +3,28 @@ require "open3"
 require "fileutils"
 require "yaml"
 
+class Hash
+  def find_and_replace!(find, replace)
+    self.each do |key, value|
+      if value.instance_of? Hash
+        value.find_and_replace! find, replace
+      else
+        if value.instance_of? String
+          value.gsub!(/#{find}/, replace)
+        elsif value.instance_of? Array
+          value.map! do |child_val|
+            if value.instance_of? String
+              value.gsub!(/#{find}/, replace)
+            elsif value.instance_of? Hash
+              value.find_and_replace! find, replace
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 module WordpressDeploy
   ##
   # WordpressDeploy's internal paths
