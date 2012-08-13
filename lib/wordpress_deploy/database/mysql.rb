@@ -1,4 +1,6 @@
 require 'tempfile'
+require 'mysql2'
+require 'php_serialize'
 
 module WordpressDeploy
   module Database
@@ -175,6 +177,108 @@ module WordpressDeploy
       ensure
         # Delete the temp file unless it was never made
         tmp_file.unlink unless tmp_file.nil?
+      end
+
+      ##
+      #
+      def migrate!(to_config_name)
+        mysql = self.class.new(to_config_name)
+
+        client = Mysql2::Client.new(
+          :host     => mysql.db_hostname,
+          :username => mysql.DB_USER,
+          :password => mysql.DB_PASSWORD,
+          :port     => mysql.db_port,
+          :database => mysql.DB_NAME,
+          #:socket = '/path/to/mysql.sock',
+          :encoding => mysql.DB_CHARSET
+        )
+
+        value_to_find = "localhost/~lindsey/huntsvillecrawfishboil.com"
+        value_to_replace = "huntsvillecrawfishboil.com"
+        escaped_value_to_find = client.escape(value_to_find)
+
+        # wp_options option_value
+        sql = <<-EOS
+        SELECT `option_id`, `option_value`
+        FROM `wp_options`
+        WHERE `option_value` REGEXP '#{escaped_value_to_find}';
+        EOS
+        wp_options = client.query(sql)
+        wp_options.each do |row|
+          row.each do |key, value|
+            if PHP.serialized?(value)
+              ruby_php = PHP.unserialize(value)
+              ruby_php.find_and_replace!(value_to_find, value_to_replace)
+              value.replace PHP.serialize(ruby_php)
+            else
+              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
+            end
+          end
+
+          # Update the database
+          sql = <<-EOD
+          UPDATE `wp_options`
+          SET `option_value`='#{client.escape(row['option_value'])}'
+          WHERE `option_id` = #{row['option_id']};
+          EOD
+          Logger.debug sql
+          client.query(sql)
+        end
+
+        # wp_posts post_content, guid
+        sql = <<-EOS
+        SELECT `ID`, `post_content`, `guid`
+        FROM `wp_posts`
+        WHERE `post_content` REGEXP '#{escaped_value_to_find}'
+        AND   `guid`         REGEXP '#{escaped_value_to_find}';
+        EOS
+        wp_posts = client.query(sql)
+        wp_posts.each do |row|
+          row.each do |key, value|
+            if PHP.serialized?(value)
+              ruby_php = PHP.unserialize(value)
+              ruby_php.find_and_replace!(value_to_find, value_to_replace)
+              value.replace PHP.serialize(ruby_php)
+            else
+              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
+            end
+          end
+          sql = <<-EOD
+          UPDATE `wp_posts`
+          SET `post_content` = '#{client.escape(row['post_content'])}',
+          `guid` = '#{client.escape(row['guid'])}'
+          WHERE `ID` = #{row['ID']};
+          EOD
+          Logger.debug sql
+          client.query(sql)
+        end
+
+        # wp_postmeta
+        sql = <<-EOS
+        SELECT `meta_id`, `meta_value`
+        FROM `wp_postmeta`
+        WHERE `meta_value` REGEXP '#{escaped_value_to_find}';
+        EOS
+        wp_postmeta = client.query(sql)
+        wp_postmeta.each do |row|
+          row.each do |key, value|
+            if PHP.serialized?(value)
+              ruby_php = PHP.unserialize(value)
+              ruby_php.find_and_replace!(value_to_find, value_to_replace)
+              value.replace PHP.serialize(ruby_php)
+            else
+              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
+            end
+          end
+          sql = <<-EOD
+          UPDATE `wp_postmeta`
+          SET `meta_value` = '#{client.escape(row['meta_value'])}'
+          WHERE `meta_id` = #{row['meta_id']};
+          EOD
+          Logger.debug sql
+          client.query(sql)
+        end
       end
 
       private
