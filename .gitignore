@@ -22,6 +22,8 @@ doc/
 
 # Spec data made during tests
 spec/data/wp-config.php
+spec/data/*.sql
 *.log
 config/
 site/
+sql/
