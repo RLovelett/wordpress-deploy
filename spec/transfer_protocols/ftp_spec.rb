@@ -52,7 +52,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
     it "should send files" do
       files = Dir.glob(File.join(data_dir, "**/*"))
 
-      Dir.should_receive(:glob).with("/Users/ryan/Source/wordpress-deploy/spec/data/**/*").and_return(files)
+      Dir.should_receive(:glob).with("#{data_dir}/**/*").and_return(files)
 
       ftp = WordpressDeploy::TransferProtocols::Ftp.new("developer")
 
