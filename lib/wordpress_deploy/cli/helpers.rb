@@ -14,7 +14,7 @@ module WordpressDeploy
       # If the command fails to execute, or returns a non-zero exit status
       # an Error will be raised.
       #
-      # Returns nil
+      # Returns STDOUT
       def run(command)
         name = command_name(command)
         Logger.debug "Running system utility '#{ name }'..."
@@ -47,7 +47,7 @@ module WordpressDeploy
             )
           end
 
-          return nil
+          return out
         else
           raise Errors::Cli::SystemCallError, <<-EOS
             '#{ name }' Failed on #{ RUBY_PLATFORM }
