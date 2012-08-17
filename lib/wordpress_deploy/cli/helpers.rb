@@ -69,7 +69,10 @@ module WordpressDeploy
         raise Errors::Cli::UtilityNotFoundError,
             'Utility Name Empty' if name.empty?
 
+        # Return the utility immediately if it has already been found
         path = UTILITY[name]
+        return path unless path.nil?
+
         err, ps = '', nil
         Open3.popen3 "which #{name}" do |stdin, stdout, stderr, wait_thr|
           stdin.close
@@ -78,7 +81,7 @@ module WordpressDeploy
 
           # Process::Status object returned
           ps = wait_thr.value
-        end if path.nil?
+        end
 
         if !ps.nil? && ps.success?
           UTILITY[name] = path
