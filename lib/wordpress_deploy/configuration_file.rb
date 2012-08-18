@@ -8,13 +8,13 @@ module WordpressDeploy
 
     ##
     # Should always point to the raw yaml object that the current
-    # Environments configuration directory contains.
+    # Configs configuration directory contains.
     def yaml
       # Set the current configuration directory
-      @config_dir ||= Environment.config_dir
+      @config_dir ||= Config.config_dir
 
       # Force change of the configuration
-      if @config_dir != Environment.config_dir || @yaml.nil?
+      if @config_dir != Config.config_dir || @yaml.nil?
         @yaml = YAML.load_file(File.join(@config_dir, "wp-config.yml"))
       end
 
@@ -137,7 +137,7 @@ module WordpressDeploy
     end
 
     def ftp_local_path
-      Environment.wp_dir
+      Config.wp_dir
     end
 
     def ftp_remote_path

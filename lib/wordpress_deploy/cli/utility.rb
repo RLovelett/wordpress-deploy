@@ -20,7 +20,7 @@ module WordpressDeploy
         Logger.verbose = options[:verbose]
 
         # Set environment options
-        Environment.set_options options
+        Config.set_options options
 
         # Create a configuration file
         config = Wordpress::Configuration.new environment
@@ -41,7 +41,7 @@ module WordpressDeploy
         Logger.verbose = options[:verbose]
 
         # Set environment options
-        Environment.set_options options
+        Config.set_options options
 
         # Create a new FTP client for sending the files
         ftp_client = TransferProtocols::Ftp.new environment
@@ -65,7 +65,7 @@ module WordpressDeploy
         Logger.verbose = options[:verbose]
 
         # Set environment options
-        Environment.set_options options
+        Config.set_options options
 
         # Create a new FTP client for receiving the files
         ftp_client = TransferProtocols::Ftp.new environment
@@ -89,7 +89,7 @@ module WordpressDeploy
         Logger.verbose = options[:verbose]
 
         # Set environment options
-        Environment.set_options options
+        Config.set_options options
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 

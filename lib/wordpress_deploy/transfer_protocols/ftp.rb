@@ -38,7 +38,7 @@ module WordpressDeploy
       ##
       #
       def transmit!
-        files = Dir.glob(File.join(Environment.wp_dir, "**/*")).sort
+        files = Dir.glob(File.join(Config.wp_dir, "**/*")).sort
         files.each do |file|
           put_file file
         end
@@ -71,7 +71,7 @@ module WordpressDeploy
         files.each do |file|
 
           # Build the file name to save it to
-          local_file = Pathname.new(File.join(Environment.wp_dir, rel_remote_path, File.basename(file))).cleanpath.to_s
+          local_file = Pathname.new(File.join(Config.wp_dir, rel_remote_path, File.basename(file))).cleanpath.to_s
           if directory? file
             Logger.debug "[mkdir] #{local_file}"
             FileUtils.mkdir_p local_file
@@ -109,7 +109,7 @@ module WordpressDeploy
       # Put file on remote machine
       def put_file(real_path)
         pn = Pathname.new(real_path)
-        relative = pn.relative_path_from Pathname.new(Environment.wp_dir)
+        relative = pn.relative_path_from Pathname.new(Config.wp_dir)
 
         # Only try to send files; no directories
         unless pn.directory?

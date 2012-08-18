@@ -19,15 +19,15 @@ RSpec.configure do |config|
 
   # Reset the environment for each spec that is run
   config.before(:each) do
-    WordpressDeploy::Environment.root_dir    = data_dir
-    WordpressDeploy::Environment.wp_dir      = "."
-    WordpressDeploy::Environment.config_dir  = "."
-    WordpressDeploy::Environment.logging     = false
+    WordpressDeploy::Config.root_dir    = data_dir
+    WordpressDeploy::Config.wp_dir      = "."
+    WordpressDeploy::Config.config_dir  = "."
+    WordpressDeploy::Config.logging     = false
   end
 
   # Clean-up log files after each spec
   config.after(:all) do
-    WordpressDeploy::Environment.clean!
+    WordpressDeploy::Config.clean!
   end
 
   shared_examples "Wordpress::ConfigurationFile mixin" do
@@ -110,7 +110,7 @@ RSpec.configure do |config|
         its(:FTP_PASSWORD)     { should eq "q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$" }
         its(:FTP_HOST)         { should eq "localhost" }
         its(:FTP_DIR)          { should eq "/wordpress" }
-        its(:ftp_local_path)   { should eq WordpressDeploy::Environment.wp_dir }
+        its(:ftp_local_path)   { should eq WordpressDeploy::Config.wp_dir }
         its(:ftp_remote_path)  { should eq "/wordpress" }
         its(:ftp_username)     { should eq "root" }
         its(:ftp_password)     { should eq "q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$" }
@@ -147,7 +147,7 @@ RSpec.configure do |config|
         its(:FTP_PASSWORD)     { should eq "trecuwawraJaZe6P@kucraDrachustUq" }
         its(:FTP_HOST)         { should eq "ftp.abbott.biz:6655" }
         its(:FTP_DIR)          { should eq nil }
-        its(:ftp_local_path)   { should eq WordpressDeploy::Environment.wp_dir }
+        its(:ftp_local_path)   { should eq WordpressDeploy::Config.wp_dir }
         its(:ftp_remote_path)  { should eq "/" }
         its(:ftp_username)     { should eq "some_user" }
         its(:ftp_password)     { should eq "trecuwawraJaZe6P@kucraDrachustUq" }
@@ -184,7 +184,7 @@ RSpec.configure do |config|
         its(:FTP_PASSWORD)     { should eq "Bun__huPEMeBreM6tebRAp@eguzuQExe" }
         its(:FTP_HOST)         { should eq "ftp.hanerutherford.biz" }
         its(:FTP_DIR)          { should eq "/html" }
-        its(:ftp_local_path)   { should eq WordpressDeploy::Environment.wp_dir }
+        its(:ftp_local_path)   { should eq WordpressDeploy::Config.wp_dir }
         its(:ftp_remote_path)  { should eq "/html" }
         its(:ftp_username)     { should eq "red_user" }
         its(:ftp_password)     { should eq "Bun__huPEMeBreM6tebRAp@eguzuQExe" }
@@ -231,7 +231,7 @@ RSpec.configure do |config|
         its(:FTP_PASSWORD)     { should eq "Daw&HEWuzaz6sa&epHech_spAKucHaTH" }
         its(:FTP_HOST)         { should eq "ftp.yundt.org" }
         its(:FTP_DIR)          { should eq "/wordpress" }
-        its(:ftp_local_path)   { should eq WordpressDeploy::Environment.wp_dir }
+        its(:ftp_local_path)   { should eq WordpressDeploy::Config.wp_dir }
         its(:ftp_remote_path)  { should eq "/wordpress" }
         its(:ftp_username)     { should eq "domenick.dare" }
         its(:ftp_password)     { should eq "Daw&HEWuzaz6sa&epHech_spAKucHaTH" }
@@ -268,7 +268,7 @@ RSpec.configure do |config|
         its(:FTP_PASSWORD)     { should eq "w5@reba?9?pepuk7w9a#H86ustaGawE!" }
         its(:FTP_HOST)         { should eq "ftp.torphagenes.com" }
         its(:FTP_DIR)          { should eq "/wordpress" }
-        its(:ftp_local_path)   { should eq WordpressDeploy::Environment.wp_dir }
+        its(:ftp_local_path)   { should eq WordpressDeploy::Config.wp_dir }
         its(:ftp_remote_path)  { should eq "/wordpress" }
         its(:ftp_username)     { should eq "harrison" }
         its(:ftp_password)     { should eq "w5@reba?9?pepuk7w9a#H86ustaGawE!" }

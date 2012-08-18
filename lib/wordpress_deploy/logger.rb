@@ -67,7 +67,7 @@ module WordpressDeploy
       end
 
       def truncate!(max_bytes = 500_000)
-        log_file = Environment.log_file
+        log_file = Config.log_file
         return unless File.exist?(log_file)
 
         if File.stat(log_file).size > max_bytes
@@ -118,8 +118,8 @@ module WordpressDeploy
       ##
       # Receives an Array of Strings to be written to the log file.
       def to_file(lines)
-        dir_name = File.dirname(Environment.log_file)
-        File.open(Environment.log_file, 'a') do |file|
+        dir_name = File.dirname(Config.log_file)
+        File.open(Config.log_file, 'a') do |file|
           lines.each {|line| file.puts line }
         end if File.writable? dir_name
         messages.push(*lines)

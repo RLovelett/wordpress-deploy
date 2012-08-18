@@ -6,8 +6,8 @@ module WordpressDeploy
 
       def initialize(config_name=nil)
         super(config_name)
-        @template = File.join(Environment.wp_dir, "wp-config-sample.php")
-        @output   = File.join(Environment.wp_dir, "wp-config.php")
+        @template = File.join(Config.wp_dir, "wp-config-sample.php")
+        @output   = File.join(Config.wp_dir, "wp-config.php")
       end
 
       ##
