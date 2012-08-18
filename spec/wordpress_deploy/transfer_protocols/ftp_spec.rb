@@ -14,8 +14,6 @@ describe WordpressDeploy::TransferProtocols::Ftp do
     Net::FTP.stub(:new).and_return(@ftp)
   end
 
-  it_should_behave_like "Wordpress::ConfigurationFile mixin"
-
   it "has methods that allow for interactive overwrite" do
     expect { subject.transmit }.to raise_error(NotImplementedError)
     expect { subject.receive }.to raise_error(NotImplementedError)

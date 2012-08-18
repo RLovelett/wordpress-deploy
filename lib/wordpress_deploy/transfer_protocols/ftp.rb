@@ -8,7 +8,6 @@ require "action_view"
 module WordpressDeploy
   module TransferProtocols
     class Ftp
-      include WordpressDeploy::ConfigurationFile
       include ActionView::Helpers::NumberHelper
 
       ##

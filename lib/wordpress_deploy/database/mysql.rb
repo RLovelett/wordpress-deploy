@@ -4,7 +4,6 @@ module WordpressDeploy
   module Database
 
     class MySql
-      include WordpressDeploy::ConfigurationFile
       include WordpressDeploy::Cli::Helpers
 
       def mysqldump

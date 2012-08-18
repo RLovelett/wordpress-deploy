@@ -13,8 +13,6 @@ describe MySql do
   it { should respond_to :command_name }
   it { should respond_to :mysqldump }
 
-  it_should_behave_like "Wordpress::ConfigurationFile mixin"
-
   shared_examples "command based on configuration" do
     before(:each) do
       subject.name = name
