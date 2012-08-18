@@ -25,6 +25,10 @@ RSpec.configure do |config|
     WordpressDeploy::Config.logging     = false
   end
 
+  config.before(:all) do
+    WordpressDeploy::Environments.load
+  end
+
   # Clean-up log files after each spec
   config.after(:all) do
     WordpressDeploy::Config.clean!
