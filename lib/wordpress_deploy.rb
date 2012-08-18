@@ -19,7 +19,7 @@ module WordpressDeploy
   end
 
   module Wordpress
-    autoload :Configuration, File.join(WORDPRESS_PATH, 'configuration')
+    autoload :Salts, ::File.join(WORDPRESS_PATH, 'salts')
   end
 
   module TransferProtocols
