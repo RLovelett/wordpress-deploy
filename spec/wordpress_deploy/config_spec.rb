@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe WordpressDeploy::Environment do
+describe WordpressDeploy::Config do
 
   it { should respond_to :set_options }
 
@@ -20,16 +20,16 @@ describe WordpressDeploy::Environment do
   its(:log_file)     { should =~ /#{data_dir}.*.log/ }
 
   context "logs" do
-    before(:all) { @log_before = WordpressDeploy::Environment.logging? }
+    before(:all) { @log_before = WordpressDeploy::Config.logging? }
     it "should default to logging off unless explicitly set to true" do
-      WordpressDeploy::Environment.logging = true
+      WordpressDeploy::Config.logging = true
       [:true, "true", 1, 0, false, :false, "Cool"].each do |val|
-        WordpressDeploy::Environment.logging = val
-        WordpressDeploy::Environment.logging?.should be_false
+        WordpressDeploy::Config.logging = val
+        WordpressDeploy::Config.logging?.should be_false
       end
     end
     its(:logging?) { should be_false }
-    after(:all) { WordpressDeploy::Environment.logging = @log_before }
+    after(:all) { WordpressDeploy::Config.logging = @log_before }
   end
 end
 

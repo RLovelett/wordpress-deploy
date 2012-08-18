@@ -1,10 +1,10 @@
 module WordpressDeploy
   ##
-  # Environment defines all of the locations of input and
+  # Config defines all of the locations of input and
   # output files. Specifically, the locations of the test
   # definitions, the locations of the test results, and
   # the locations of the build applications.
-  module Environment
+  module Config
 
     ##
     # Setup required paths based on the given options
