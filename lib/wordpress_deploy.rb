@@ -4,25 +4,34 @@ require "fileutils"
 require "yaml"
 
 class Hash
+
   def find_and_replace!(find, replace)
-    self.each do |key, value|
-      if value.instance_of? Hash
-        value.find_and_replace! find, replace
-      else
-        if value.instance_of? String
-          value.gsub!(/#{find}/, replace)
-        elsif value.instance_of? Array
-          value.map! do |child_val|
-            if value.instance_of? String
-              value.gsub!(/#{find}/, replace)
-            elsif value.instance_of? Hash
-              value.find_and_replace! find, replace
-            end
-          end
-        end
-      end
-    end
+    RecursiveReplace.find_and_replace!(find, replace, self) 
   end
+
+end
+
+class RecursiveReplace
+
+  def self.find_and_replace!(find, replace, obj)
+    m = "find_and_replace_#{obj.class}!"
+    send(m, find, replace, obj) if respond_to? m, true
+  end
+
+  private
+
+  def self.find_and_replace_Hash!(find, replace, hash)
+    hash.each { |k,v| find_and_replace!(find, replace, v) }
+  end
+
+  def self.find_and_replace_Array!(find, replace, arr)
+    arr.each { |x| find_and_replace!(find, replace, x) }
+  end
+
+  def self.find_and_replace_String!(find, replace, str)
+    str.gsub!(/#{find}/, replace)
+  end
+
 end
 
 module WordpressDeploy
