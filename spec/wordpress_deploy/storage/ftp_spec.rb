@@ -2,7 +2,7 @@ require 'spec_helper'
 
 include WordpressDeploy
 
-describe WordpressDeploy::TransferProtocols::Ftp do
+describe WordpressDeploy::Storage::Ftp do
   before(:each) do
     # None of the methods that follow are testing
     # the Net::FTP object actions; therefore they
@@ -25,8 +25,8 @@ describe WordpressDeploy::TransferProtocols::Ftp do
   context "FTP connection" do
     before(:each) do
       @ftp = double("ftp")
-      @ftp.should_receive(:connect).with("localhost", 21)
-      @ftp.should_receive(:login).with("root", "q9&hu6Re_*dReWr_GAba_2wr89#2Ra8$")
+      @ftp.should_receive(:connect).with("ftp.hanerutherford.biz", 77)
+      @ftp.should_receive(:login).with("red_user", "Bun__huPEMeBreM6tebRAp@eguzuQExe")
       @ftp.should_receive(:passive=).with(true)
       @ftp.stub(:pwd)
       @ftp.stub(:closed?).and_return(false)
@@ -34,17 +34,7 @@ describe WordpressDeploy::TransferProtocols::Ftp do
       @ftp.stub(:chdir)
       @ftp.stub(:putbinaryfile)
       Net::FTP.stub(:new).and_return(@ftp)
-      WordpressDeploy::TransferProtocols::Ftp.any_instance.stub(:ftp).and_return(@ftp)
-    end
-
-    it "with valid credentials" do
-      ftp = WordpressDeploy::TransferProtocols::Ftp.new("developer")
-    end
-
-    it "close an open connection" do
-      ftp = WordpressDeploy::TransferProtocols::Ftp.new("developer")
-      ftp.close.should be_true
-      #ftp.close.should be_false
+      WordpressDeploy::Storage::Ftp.any_instance.stub(:ftp).and_return(@ftp)
     end
 
     it "should send files" do
@@ -52,7 +42,12 @@ describe WordpressDeploy::TransferProtocols::Ftp do
 
       Dir.should_receive(:glob).with("#{data_dir}/**/*").and_return(files)
 
-      ftp = WordpressDeploy::TransferProtocols::Ftp.new("developer")
+      ftp = WordpressDeploy::Storage::Ftp.new do
+        host "ftp.hanerutherford.biz:77"
+        user "red_user"
+        password "Bun__huPEMeBreM6tebRAp@eguzuQExe"
+        destination "/html"
+      end
 
       ftp.should_receive(:put_file).exactly(files.count).times
 

@@ -1,22 +1,62 @@
 ##
 # Only load the Net::FTP library/gem when the
-# WordpressDeploy::TransferProtocols::Ftp class is loaded
+# WordpressDeploy::Storage::Ftp class is loaded
 require "net/ftp"
 require "pathname"
 require "action_view"
 
 module WordpressDeploy
-  module TransferProtocols
+  module Storage
     class Ftp
       include ActionView::Helpers::NumberHelper
 
       ##
       # Create a new instance of the Ftp object
-      def initialize(config_name = nil)
-        super(config_name)
+      def initialize(&block)
+        @host        ||= "localhost"
+        @port        ||= 21
+        @user        ||= "root"
+        @password    ||= ""
+        @destination ||= "/"
 
-        # Actually open the connection
-        connect
+        instance_eval(&block) if block_given?
+      end
+
+      def host(new_host = nil)
+        unless new_host.nil?
+          match = /(?<host>.*?)(?=:|\z)(:(?<port>\d+))?/.match(new_host.to_s)
+          @host = match[:host].to_s unless match[:host].nil?
+
+          # Set the port information
+          unless match[:port].nil?
+            @port = match[:port].to_i
+          end
+
+          # Has port is true; unless a socket was set
+          @has_port = !@has_socket
+        end
+
+        # return the host
+        @host
+      end
+
+      def port
+        @port
+      end
+
+      def user(new_user = nil)
+        @user = new_user.to_s unless new_user.nil?
+        @user
+      end
+
+      def password(new_pass = nil)
+        @password = new_pass.to_s unless new_pass.nil?
+        @password
+      end
+
+      def destination(new_dest = nil)
+        @destination = new_dest.to_s unless new_dest.nil?
+        @destination
       end
 
       ##
@@ -37,10 +77,13 @@ module WordpressDeploy
       ##
       #
       def transmit!
+        connect
         files = Dir.glob(File.join(Config.wp_dir, "**/*")).sort
         files.each do |file|
           put_file file
         end
+      ensure
+        close
       end
 
       def receive
@@ -97,11 +140,11 @@ module WordpressDeploy
       ##
       # Establish a connection to the remote server
       def connect
-        ftp.connect(ftp_hostname, ftp_port)
-        ftp.login(ftp_username, ftp_password)
+        ftp.connect(host, port)
+        ftp.login(user, password)
         ftp.passive = true
         # ftp.debug_mode = true
-        #chdir(remote_path)
+        #chdir(destination)
       end
 
       ##
@@ -113,7 +156,7 @@ module WordpressDeploy
         # Only try to send files; no directories
         unless pn.directory?
           local_directory, local_file_name = relative.split
-          remote_directory = Pathname.new("#{remote_path}/#{local_directory}").cleanpath.to_s
+          remote_directory = Pathname.new("#{destination}/#{local_directory}").cleanpath.to_s
 
           begin
             # Make sure to be in the right directory

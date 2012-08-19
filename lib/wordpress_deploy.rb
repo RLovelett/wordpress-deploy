@@ -7,11 +7,11 @@ module WordpressDeploy
   ##
   # WordpressDeploy's internal paths
   #
-  LIBRARY_PATH            = File.join(File.dirname(__FILE__), 'wordpress_deploy')
-  CLI_PATH                = File.join(LIBRARY_PATH, 'cli')
-  WORDPRESS_PATH          = File.join(LIBRARY_PATH, 'wordpress')
-  TRANSFER_PROTOCOLS_PATH = File.join(LIBRARY_PATH, 'transfer_protocols')
-  DATABASE_PATH           = File.join(LIBRARY_PATH, 'database')
+  LIBRARY_PATH    = File.join(File.dirname(__FILE__), 'wordpress_deploy')
+  CLI_PATH        = File.join(LIBRARY_PATH, 'cli')
+  WORDPRESS_PATH  = File.join(LIBRARY_PATH, 'wordpress')
+  STORAGE_PATH    = File.join(LIBRARY_PATH, 'storage')
+  DATABASE_PATH   = File.join(LIBRARY_PATH, 'database')
 
   module Cli
     autoload :Helpers, File.join(CLI_PATH, 'helpers')
@@ -22,8 +22,9 @@ module WordpressDeploy
     autoload :Salts, ::File.join(WORDPRESS_PATH, 'salts')
   end
 
-  module TransferProtocols
-    autoload :Ftp, File.join(TRANSFER_PROTOCOLS_PATH, 'ftp')
+  module Storage
+    autoload :Ftp,   File.join(STORAGE_PATH, 'ftp')
+    autoload :Local, File.join(STORAGE_PATH, 'local')
   end
 
   module Database
