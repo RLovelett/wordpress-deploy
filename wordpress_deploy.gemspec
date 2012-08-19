@@ -4,7 +4,7 @@ require File.expand_path('../lib/wordpress_deploy/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Ryan Lovelett"]
   gem.email         = ["ryan@lovelett.me"]
-  gem.description   = %q{Used to deploy a Wordpress site.}
+  gem.description   = %q{Wordpress Deploy provides an elegant DSL in Ruby for modeling and executing your deployments.}
   gem.summary       = %q{Wordpress Deploy is a RubyGem, written for Linux and Mac OSX, that allows you to easily perform Wordpress deployment operations. It provides you with an elegant DSL in Ruby for modeling your deployments.}
   gem.homepage      = %q{https://github.com/RLovelett/wordpress-deploy}
 
@@ -19,7 +19,6 @@ Gem::Specification.new do |gem|
   # Gem dependencies
   gem.add_dependency 'thor',       ['~> 0.15.4']
   gem.add_dependency 'colorize',   ['~> 0.5.8']
-  gem.add_dependency 'os',         ['~> 0.9.4']
   gem.add_dependency 'titleize',   ['~> 1.2.1']
   gem.add_dependency 'actionpack', ['~> 3.2.6']
 
