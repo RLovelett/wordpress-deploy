@@ -7,6 +7,12 @@ def data_dir
   File.join(File.dirname(__FILE__), "data")
 end
 
+# Set shell to basic
+$0 = "thor"
+$thor_runner = true
+ARGV.clear
+Thor::Base.shell = Thor::Shell::Basic
+
 RSpec.configure do |config|
   # == Mock Framework
   #

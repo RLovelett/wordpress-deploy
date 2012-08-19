@@ -12,21 +12,22 @@ module WordpressDeploy
       class_option :config_dir,  type: :string,  default: '',           aliases: '-c'
       class_option :verbose,     type: :boolean, default: false,        aliases: '-v'
 
-
-      desc "generate", "Generate the wp-config.php file."
-      def generate(environment)
-        ##
+      desc "config ENVIRONMENT", "Generate the wp-config.php file for the specified environment."
+      def config(environment)
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
         # Set environment options
         Config.set_options options
 
-        # Create a configuration file
-        config = Wordpress::Configuration.new environment
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
+
+        # Get the Environment the user requested
+        env = WordpressDeploy::Environments.find environment.to_sym
 
         # Save the configuration file
-        config.save!
+        env.save_wp_config
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
@@ -34,62 +35,83 @@ module WordpressDeploy
         exit(1)
       end
 
-      desc "deploy", "Deploy via FTP to configuration hostname."
-      def deploy(environment)
-        ##
+      desc "deploy FROM TO", <<-EOS
+Deploy Wordpress onto the TO environment.
+
+This is achieved by first generating the appropriate wp-config.php file for the
+desired environment. This wp-config.php, along with all other files within the
+wp_dir, are then transmitted to the configured TO environment.
+
+Next, the FROM database is backed up into the sql_dir, and then sent to the
+configured TO environment. Finally, all records in the TO database are scrubbed
+to be relative to the new hostname configured for the environment (this
+includes PHP serialized strings).
+      EOS
+      def deploy(from, to)
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
         # Set environment options
         Config.set_options options
 
-        # Create a new FTP client for sending the files
-        ftp_client = TransferProtocols::Ftp.new environment
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
 
-        # Now transmit the files
-        ftp_client.transmit!
+        # Get the Environment the user requested
+        from = WordpressDeploy::Environments.find from.to_sym
+        to   = WordpressDeploy::Environments.find to.to_sym
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
         # Exit with an error
         exit(1)
-      ensure
-        puts "Closing connection.".colorize(color: :red, background: :yellow) if ftp_client.close
       end
 
-      desc "backup", "Pull down the remote files over FTP."
+      desc "backup ENVIRONMENT", "Call mysqldump on the database specified by ENVIRONMENT"
       def backup(environment)
-        ##
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
         # Set environment options
         Config.set_options options
 
-        # Create a new FTP client for receiving the files
-        ftp_client = TransferProtocols::Ftp.new environment
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
 
-        # Now receive the files
-        ftp_client.receive!
+        # Get the Environment the user requested
+        env = WordpressDeploy::Environments.find environment.to_sym
+
+        # Backup the database to the sql_dir
+        env.database.save!
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
         # Exit with an error
         exit(1)
-      ensure
-        puts "Closing connection.".colorize(color: :red, background: :yellow) if ftp_client.close
       end
 
-      desc "mirror", "Mirror database between two locations"
-      def mirror(from, to)
-        ##
+      desc "transmit ENVIRONMENT", "Transmit the files in wp_dir"
+      def transmit(environment)
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
         # Set environment options
         Config.set_options options
+
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
+
+        # Get the Environment the user requested
+        env = WordpressDeploy::Environments.find environment.to_sym
+
+        # Save the configuration file
+        env.save_wp_config
+
+        # Send the files in wp_dir
+        env.transfer.transmit!
+
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
