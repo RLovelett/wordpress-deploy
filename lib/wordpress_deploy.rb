@@ -19,7 +19,7 @@ module WordpressDeploy
   end
 
   module Wordpress
-    autoload :Salts, ::File.join(WORDPRESS_PATH, 'salts')
+    autoload :Salts, File.join(WORDPRESS_PATH, 'salts')
   end
 
   module Storage
