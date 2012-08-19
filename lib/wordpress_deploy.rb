@@ -8,6 +8,7 @@ module WordpressDeploy
   # WordpressDeploy's internal paths
   #
   LIBRARY_PATH    = File.join(File.dirname(__FILE__), 'wordpress_deploy')
+  TEMPLATE_PATH   = File.join(File.dirname(__FILE__), '..', 'templates')
   CLI_PATH        = File.join(LIBRARY_PATH, 'cli')
   WORDPRESS_PATH  = File.join(LIBRARY_PATH, 'wordpress')
   STORAGE_PATH    = File.join(LIBRARY_PATH, 'storage')
