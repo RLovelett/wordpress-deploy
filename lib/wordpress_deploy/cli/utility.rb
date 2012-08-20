@@ -69,13 +69,13 @@ includes PHP serialized strings).
         from.transfer.transmit!
 
         # Save the to database locally
-        to.database.save!
+        from.database.save!
 
-        # Send the database to => from
-        to.database.send!(from)
+        # Send the database from => to
+        from.database.send!(to)
 
-        # Now migrate the database to => from
-        to.database.migrate!(from)
+        # Now migrate the database from => to
+        from.database.migrate!(to)
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
@@ -100,13 +100,13 @@ includes PHP serialized strings).
         to   = WordpressDeploy::Environments.find to.to_sym
 
         # Save the to database locally
-        to.database.save!
+        from.database.save!
 
         # Send the database to => from
-        to.database.send!(from)
+        from.database.send!(to)
 
         # Now migrate the database to => from
-        to.database.migrate!(from)
+        from.database.migrate!(to)
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
