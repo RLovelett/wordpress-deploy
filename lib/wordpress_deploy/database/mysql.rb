@@ -301,7 +301,6 @@ module WordpressDeploy
       end
 
       def mysqlload(database, file_name)
-        mysql = self.class.new config_name
         arg_port = database.port
         arg_host = database.host
         arg_user = database.user
