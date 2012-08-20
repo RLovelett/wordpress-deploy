@@ -62,6 +62,21 @@ includes PHP serialized strings).
         from = WordpressDeploy::Environments.find from.to_sym
         to   = WordpressDeploy::Environments.find to.to_sym
 
+        # Save the correct configuration file
+        from.save_wp_config
+
+        # Send the files in wp_dir
+        from.transfer.transmit!
+
+        # Save the to database locally
+        to.database.save!
+
+        # Send the database to => from
+        to.database.send!(from)
+
+        # Now migrate the database to => from
+        to.database.migrate!(from)
+
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
 
