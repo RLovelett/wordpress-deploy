@@ -84,6 +84,37 @@ includes PHP serialized strings).
         exit(1)
       end
 
+      desc "mirror FROM TO", ""
+      def mirror(from, to)
+        # Set Logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
+        # Set environment options
+        Config.set_options options
+
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
+
+        # Get the Environment the user requested
+        from = WordpressDeploy::Environments.find from.to_sym
+        to   = WordpressDeploy::Environments.find to.to_sym
+
+        # Save the to database locally
+        to.database.save!
+
+        # Send the database to => from
+        to.database.send!(from)
+
+        # Now migrate the database to => from
+        to.database.migrate!(from)
+
+      rescue => err
+        Logger.error Errors::Cli::Utility::Error.wrap(err)
+
+        # Exit with an error
+        exit(1)
+      end
+
       desc "backup ENVIRONMENT", "Call mysqldump on the database specified by ENVIRONMENT"
       def backup(environment)
         # Set Logger into verbose mode (if the user requested it)
