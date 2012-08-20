@@ -30,6 +30,7 @@ module WordpressDeploy
     def database(&block)
       @database ||= WordpressDeploy::Database::MySql.new
       @database.instance_eval(&block) if block_given?
+      @database.base_url base_url
       @database
     end
 

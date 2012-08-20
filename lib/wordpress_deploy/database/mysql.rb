@@ -19,6 +19,8 @@ module WordpressDeploy
 
         @has_port   ||= true
         @has_socket ||= false
+
+        @base_url   ||= @host
       end
 
       ##
@@ -123,6 +125,13 @@ module WordpressDeploy
       end
 
       ##
+      #
+      def base_url(new_url = nil)
+        @base_url = new_url.to_s unless new_url.nil?
+        @base_url
+      end
+
+      ##
       # The file that the instance would save to if
       # save is called.
       def file
@@ -151,24 +160,25 @@ module WordpressDeploy
 
       ##
       #
-      def send!(to_config_name)
+      def send!(to_env)
+        # Get the MySql instance
+        to_db = to_env.database
+
         # Check to see if there is a SQL file
         if File.exists? file
-          # Create the 'to' configuration
-          mysql = self.class.new(to_config_name)
-
           # Open the source sql file for reading
-          tmp_file = Tempfile.new(["#{to_config_name}", '.sql'])
+          tmp_file = Tempfile.new(["#{to_db.name}", '.sql'])
 
           # Write sql to tmpfile while changing the
           # the CREATE DATABASE and USE commands to make sense for
           # the 'to' configuration
           sql_dump = File.read(file)
-          sql_dump.gsub!(/^USE\ `#{self.DB_NAME}`/, "USE `#{mysql.DB_NAME}`")
+          sql_dump.gsub!(/^CREATE\ DATABASE.*$/i, "")
+          sql_dump.gsub!(/^USE\ `#{name}`/, "USE `#{to_db.name}`")
           tmp_file.puts sql_dump
 
           # Get the MySQL load command
-          cmd = mysqlload to_config_name, tmp_file.path
+          cmd = mysqlload to_db, tmp_file.path
 
           # Run the mysql command to load the mysqldump into
           # the destination mysql instance
@@ -181,21 +191,23 @@ module WordpressDeploy
 
       ##
       #
-      def migrate!(to_config_name)
-        mysql = self.class.new(to_config_name)
+      def migrate!(to_env)
+        # Get the MySql instance
+        to_db = to_env.database
 
         client = Mysql2::Client.new(
-          :host     => mysql.db_hostname,
-          :username => mysql.DB_USER,
-          :password => mysql.DB_PASSWORD,
-          :port     => mysql.db_port,
-          :database => mysql.DB_NAME,
+          :host     => to_db.host,
+          :username => to_db.user,
+          :password => to_db.password,
+          :port     => to_db.port,
+          :database => to_db.name,
           #:socket = '/path/to/mysql.sock',
-          :encoding => mysql.DB_CHARSET
+          :encoding => to_db.charset
         )
 
-        value_to_find = "localhost/~lindsey/huntsvillecrawfishboil.com"
-        value_to_replace = "huntsvillecrawfishboil.com"
+        # MySQL escape
+        value_to_find = base_url
+        value_to_replace = to_env.base_url
         escaped_value_to_find = client.escape(value_to_find)
 
         # wp_options option_value
@@ -288,13 +300,13 @@ module WordpressDeploy
         "#{utility("mysqldump")} #{arguments}"
       end
 
-      def mysqlload(config_name, file_name)
+      def mysqlload(database, file_name)
         mysql = self.class.new config_name
-        arg_port = mysql.db_port
-        arg_host = mysql.db_hostname
-        arg_user = mysql.DB_USER
-        arg_pass = mysql.DB_PASSWORD
-        arg_name = mysql.DB_NAME
+        arg_port = database.port
+        arg_host = database.host
+        arg_user = database.user
+        arg_pass = database.password
+        arg_name = database.name
         arguments = "-P \"#{arg_port}\" -u \"#{arg_user}\" -h \"#{arg_host}\" -p\"#{arg_pass}\" -D \"#{arg_name}\""
 
         "#{utility("mysql")} #{arguments} < #{file_name}"
