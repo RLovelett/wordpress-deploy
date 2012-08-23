@@ -6,7 +6,15 @@ require "yaml"
 class Hash
 
   def find_and_replace!(find, replace)
-    RecursiveReplace.find_and_replace!(find, replace, self) 
+    RecursiveReplace.find_and_replace!(find, replace, self)
+  end
+
+end
+
+class Array
+
+  def find_and_replace!(find, replace)
+    RecursiveReplace.find_and_replace!(find, replace, self)
   end
 
 end
