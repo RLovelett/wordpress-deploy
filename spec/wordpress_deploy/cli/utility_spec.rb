@@ -34,11 +34,11 @@ describe WordpressDeploy::Cli::Utility do
     WordpressDeploy::Environments.should_receive(:find).once.with(:development).and_return(from)
     WordpressDeploy::Environments.should_receive(:find).once.with(:production).and_return(to)
 
-    from.should_receive(:database)
-
-    to.should_receive(:save_wp_config)
-    to.should_receive(:transmit)
-    to.should_receive(:datbase)
+    from.should_receive(:save_wp_config)
+    from.stub_chain(:transfer, :transmit!)
+    from.stub_chain(:database, :save!)
+    from.stub_chain(:database, :send!).with(to)
+    from.stub_chain(:database, :migrate!).with(to)
 
     # Execute the command
     args = ["deploy", "development", "production"]
