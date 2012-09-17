@@ -1,6 +1,7 @@
 require 'tempfile'
 require 'mysql2'
 require 'php_serialize'
+require 'shellwords'
 
 module WordpressDeploy
   module Database
@@ -296,7 +297,7 @@ module WordpressDeploy
       private
 
       def mysqldump
-        arguments = "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p\"#{password}\" -B \"#{name}\""
+        arguments = "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p\"#{Shellwords.escape(password)}\" -B \"#{name}\""
         "#{utility("mysqldump")} #{arguments}"
       end
 
@@ -306,7 +307,7 @@ module WordpressDeploy
         arg_user = database.user
         arg_pass = database.password
         arg_name = database.name
-        arguments = "-P \"#{arg_port}\" -u \"#{arg_user}\" -h \"#{arg_host}\" -p\"#{arg_pass}\" -D \"#{arg_name}\""
+        arguments = "-P \"#{arg_port}\" -u \"#{arg_user}\" -h \"#{arg_host}\" -p\"#{Shellwords.escape(arg_pass)}\" -D \"#{arg_name}\""
 
         "#{utility("mysql")} #{arguments} < #{file_name}"
       end
