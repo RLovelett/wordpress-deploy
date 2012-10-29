@@ -63,7 +63,7 @@ includes PHP serialized strings).
         to   = WordpressDeploy::Environments.find to.to_sym
 
         # Save the correct configuration file
-        from.save_wp_config
+        to.save_wp_config
 
         # Send the files in wp_dir
         to.transfer.transmit!
