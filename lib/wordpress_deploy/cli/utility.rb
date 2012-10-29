@@ -66,7 +66,7 @@ includes PHP serialized strings).
         from.save_wp_config
 
         # Send the files in wp_dir
-        from.transfer.transmit!
+        to.transfer.transmit!
 
         # Save the to database locally
         from.database.save!
