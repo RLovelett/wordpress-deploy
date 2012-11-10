@@ -60,6 +60,7 @@ module WordpressDeploy
   end
 
   module Database
+    autoload :Environment, File.join(DATABASE_PATH, 'environment')
     autoload :MySql, File.join(DATABASE_PATH, 'mysql')
   end
 

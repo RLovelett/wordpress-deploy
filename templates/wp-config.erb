@@ -16,22 +16,22 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', '<%= database.name %>');
+define('DB_NAME', '<%= @database_config.name %>');
 
 /** MySQL database username */
-define('DB_USER', '<%= database.user %>');
+define('DB_USER', '<%= @database_config.user %>');
 
 /** MySQL database password */
-define('DB_PASSWORD', '<%= database.password %>');
+define('DB_PASSWORD', '<%= @database_config.password %>');
 
 /** MySQL hostname */
-define('DB_HOST', '<%= database.wp_host %>');
+define('DB_HOST', '<%= @database_config.wp_host %>');
 
 /** Database Charset to use in creating database tables. */
-define('DB_CHARSET', '<%= database.charset %>');
+define('DB_CHARSET', '<%= @database_config.charset %>');
 
 /** The Database Collate type. Don't change this if in doubt. */
-define('DB_COLLATE', '<%= database.collate %>');
+define('DB_COLLATE', '<%= @database_config.collate %>');
 
 /**#@+
  * Authentication Unique Keys and Salts.
@@ -59,7 +59,7 @@ define('NONCE_SALT',       '<%= salts.nonce_salt %>');
  * You can have multiple installations in one database if you give each a unique
  * prefix. Only numbers, letters, and underscores please!
  */
-$table_prefix  = '<%= database.table_prefix %>';
+$table_prefix  = '<%= @database_config.table_prefix %>';
 
 /**
  * WordPress Localized Language, defaults to English.

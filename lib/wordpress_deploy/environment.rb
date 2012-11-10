@@ -26,11 +26,15 @@ module WordpressDeploy
     end
 
     ##
+    # Provide the database configuration for the environment
+    #
+    # Returns an instance
     #
     def database(&block)
-      @database ||= WordpressDeploy::Database::MySql.new
-      @database.instance_eval(&block) if block_given?
-      @database.base_url base_url
+      @database_config ||= WordpressDeploy::Database::Environment.new
+      @database_config.instance_eval(&block) if block_given?
+      @database_config.base_url base_url
+      @database ||= WordpressDeploy::Database::MySql.new(@database_config)
       @database
     end
 

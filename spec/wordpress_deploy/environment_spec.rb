@@ -53,7 +53,9 @@ describe WordpressDeploy::Environment do
     its(:wpdebug) { should eq "true" }
 
     context "database configuration" do
-      subject { sample_configuration.database }
+      # TODO this probably should not be tested here It is extremely well
+      # tested in spec/wordpress_deploy/database/environment_spec.rb
+      subject { sample_configuration.database.env }
       its(:name)         { should eq "production_database_name" }
       its(:user)         { should eq "some_user" }
       its(:password)     { should eq "trecuwawraJaZe6P@kucraDrachustUq" }
