@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'sequel'
 require 'mysql2'
 require 'php_serialize'
 require 'shellwords'
