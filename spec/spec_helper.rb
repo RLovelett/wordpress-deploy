@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'fake_ftp'
 require 'fakefs/safe'
 require 'fakefs/spec_helpers'
+require 'faker'
 
 require 'wordpress_deploy'
 

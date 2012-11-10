@@ -32,4 +32,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'terminal-notifier-guard', ['~> 1.5.3']
   gem.add_development_dependency 'fakefs',                  ['~> 0.4.2']
   gem.add_development_dependency 'fake_ftp',                ['~> 0.0.9']
+  gem.add_development_dependency 'faker',                   ['~> 1.1.2']
 end
