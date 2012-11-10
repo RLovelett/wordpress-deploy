@@ -165,6 +165,29 @@ includes PHP serialized strings).
         # Exit with an error
         exit(1)
       end
+
+      desc "receive ENVIRONMENT", ""
+      def receive(environment)
+        # Set logger into verbose mode (if the user requested it)
+        Logger.verbose = options[:verbose]
+
+        # Set environment options
+        Config.set_options options
+
+        # Load ALL the available environments
+        WordpressDeploy::Environments.load
+
+        # Get the Environment the user requested
+        env = WordpressDeploy::Environments.find environments.to_sym
+
+        # Receive the files into wp_dir
+
+      rescue => err
+        Logger.error Errors::Cli::Utility::Error.wrap(err)
+
+        # Exit with an error
+        exit(1)
+      end
     end
   end
 end
