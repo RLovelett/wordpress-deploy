@@ -48,7 +48,7 @@ configured TO environment. Finally, all records in the TO database are scrubbed
 to be relative to the new hostname configured for the environment (this
 includes PHP serialized strings).
       EOS
-      def deploy(from, to)
+      def deploy(*env_args)
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
@@ -58,9 +58,27 @@ includes PHP serialized strings).
         # Load ALL the available environments
         WordpressDeploy::Environments.load
 
+        # Map each of the environments. Also, check that the environments exist
+        # if an environment was not setup then this needs to die horrifically!
+        environments = env_args.map do |arg|
+          unless WordpressDeploy::Environments.name?(arg.to_sym)
+            raise "The environment #{arg} does not exist. Please check spelling and capitalization"
+          end
+          WordpressDeploy::Environments.find arg.to_sym
+        end
+
+        # Does each environment provide a valid connection to the database? Die
+        # horrifically if not!
+        environments.each do |env|
+          unless env.database.connection?
+            Logger.error "Cannot make connection to #{env.name.to_s} database."
+            exit(1)
+          end
+        end
+
         # Get the Environment the user requested
-        from = WordpressDeploy::Environments.find from.to_sym
-        to   = WordpressDeploy::Environments.find to.to_sym
+        from = environments[0]
+        to   = environments[1]
 
         # Save the correct configuration file
         to.save_wp_config
@@ -74,8 +92,16 @@ includes PHP serialized strings).
         # Send the database from => to
         from.database.send!(to)
 
-        # Now migrate the database from => to
-        from.database.migrate!(to)
+        # Now manipulate the links in the to database
+        to.database.migrate!(from.database.env.base_url, to.database.env.base_url)
+
+        # Display any errors if they are found
+        to.database.errors.each do |error|
+          Logger.error error
+        end
+
+        # Give an failure exit code if there were errors
+        exit(1) if to.database.errors?
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
@@ -84,8 +110,8 @@ includes PHP serialized strings).
         exit(1)
       end
 
-      desc "mirror FROM TO", ""
-      def mirror(from, to)
+      desc "database FROM TO", "Copy database and manipulate links"
+      def database(*env_args)
         # Set Logger into verbose mode (if the user requested it)
         Logger.verbose = options[:verbose]
 
@@ -95,9 +121,27 @@ includes PHP serialized strings).
         # Load ALL the available environments
         WordpressDeploy::Environments.load
 
+        # Map each of the environments. Also, check that the environments exist
+        # if an environment was not setup then this needs to die horrifically!
+        environments = env_args.map do |arg|
+          unless WordpressDeploy::Environments.name?(arg.to_sym)
+            raise "The environment #{arg} does not exist. Please check spelling and capitalization"
+          end
+          WordpressDeploy::Environments.find arg.to_sym
+        end
+
+        # Does each environment provide a valid connection to the database? Die
+        # horrifically if not!
+        environments.each do |env|
+          unless env.database.connection?
+            Logger.error "Cannot make connection to #{env.name.to_s} database."
+            exit(1)
+          end
+        end
+
         # Get the Environment the user requested
-        from = WordpressDeploy::Environments.find from.to_sym
-        to   = WordpressDeploy::Environments.find to.to_sym
+        from = environments[0]
+        to   = environments[1]
 
         # Save the to database locally
         from.database.save!
@@ -105,8 +149,16 @@ includes PHP serialized strings).
         # Send the database to => from
         from.database.send!(to)
 
-        # Now migrate the database to => from
-        from.database.migrate!(to)
+        # Now manipulate the links in the to database
+        to.database.migrate!(from.database.env.base_url, to.database.env.base_url)
+
+        # Display any errors if they are found
+        to.database.errors.each do |error|
+          Logger.error error
+        end
+
+        # Give an failure exit code if there were errors
+        exit(1) if to.database.errors?
 
       rescue => err
         Logger.error Errors::Cli::Utility::Error.wrap(err)
