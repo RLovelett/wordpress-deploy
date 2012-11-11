@@ -10,7 +10,7 @@ module WordpressDeploy
     class MySql
       include WordpressDeploy::Cli::Helpers
 
-      attr_reader :env
+      attr_reader :env, :errors
       alias :environment :env
 
       def initialize(environment)
@@ -24,6 +24,8 @@ module WordpressDeploy
           database: @env.name,
           encoding: @env.charset
         )
+        @errors = []
+        @transactions = []
       end
 
       ##
@@ -88,107 +90,78 @@ module WordpressDeploy
       end
 
       ##
+      # Find and replace a string in the database.
       #
-      def migrate!(to_env)
-        # Get the MySql instance
-        to_db = to_env.database
+      # The first argument is the value to find and the second
+      # the value the found argument will be replaced with.
+      #
+      # Searches all tables in the database. The search is performed
+      # against all columns excluding the primary key.
+      def migrate!(value_to_find, value_to_replace)
+        raise "MySQL: #{env.name} is unreachable on #{env.wp_host}." unless connection?
 
-        client = Mysql2::Client.new(
-          :host     => to_db.host,
-          :username => to_db.user,
-          :password => to_db.password,
-          :port     => to_db.port,
-          :database => to_db.name,
-          #:socket = '/path/to/mysql.sock',
-          :encoding => to_db.charset
-        )
+        # Begin searching each table
+        @db.tables.each do |table|
 
-        # MySQL escape
-        value_to_find = base_url
-        value_to_replace = to_env.base_url
-        escaped_value_to_find = client.escape(value_to_find)
+          # Now get the tables schema
+          schema = @db.schema(table)
 
-        # wp_options option_value
-        sql = <<-EOS
-        SELECT `option_id`, `option_value`
-        FROM `wp_options`
-        WHERE `option_value` REGEXP '#{escaped_value_to_find}';
-        EOS
-        wp_options = client.query(sql)
-        wp_options.each do |row|
-          row.each do |key, value|
-            if PHP.serialized?(value)
-              ruby_php = PHP.unserialize(value)
-              ruby_php.find_and_replace!(value_to_find, value_to_replace)
-              value.replace PHP.serialize(ruby_php)
-            else
-              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
+          # Select the primary key for the table
+          primary_key = schema.map { |column| column[0] if     column[1][:primary_key] }.compact[0]
+
+          # Get all the columns to search (i.e., everything that is not a primary key)
+          columns     = schema.map { |column| column[0] unless column[1][:primary_key] }.compact
+
+          # Loop over each column
+          columns.each do |column|
+
+            # Create the query to search MySQL
+            dataset = @db.select(primary_key, column).from(table).where(Sequel.like(column, /#{value_to_find}/))
+
+            # Log the query that is about to be performed
+            Logger.debug dataset.select_sql
+
+            # Manipulate each row in the dataset
+            dataset.each do |row|
+              begin
+                value = row[column]
+                if PHP.serialized?(value)
+                  ruby_php = PHP.unserialize(value)
+                  ruby_php.find_and_replace!(value_to_find, value_to_replace)
+                  value.replace PHP.serialize(ruby_php)
+                elsif value.instance_of?(String)
+                  value.gsub!(/#{value_to_find}/, value_to_replace)
+                else
+                  raise "Cannot handle #{value.class}"
+                end
+
+                # Manipulation is over
+                row[column] = value
+
+                @transactions << row
+              rescue => e
+                str = "[#{table}.#{primary_key.to_s} = #{row[primary_key]}] Cannot manipulate column \"#{column.to_s}\". #{e.message}"
+                @errors << str
+              end
+            end
+
+            @db.transaction do
+              until @transactions.empty?
+                update = @transactions.pop
+
+                # Log the query that is going to be updated
+                Logger.debug @db.from(table).where("#{primary_key} = ?", update[primary_key]).update_sql(update)
+
+                # Actually create the update transaction
+                @db.from(table).where("#{primary_key} = ?", update[primary_key]).update(update)
+              end
             end
           end
-
-          # Update the database
-          sql = <<-EOD
-          UPDATE `wp_options`
-          SET `option_value`='#{client.escape(row['option_value'])}'
-          WHERE `option_id` = #{row['option_id']};
-          EOD
-          Logger.debug sql
-          client.query(sql)
         end
+      end
 
-        # wp_posts post_content, guid
-        sql = <<-EOS
-        SELECT `ID`, `post_content`, `guid`
-        FROM `wp_posts`
-        WHERE `post_content` REGEXP '#{escaped_value_to_find}'
-        AND   `guid`         REGEXP '#{escaped_value_to_find}';
-        EOS
-        wp_posts = client.query(sql)
-        wp_posts.each do |row|
-          row.each do |key, value|
-            if PHP.serialized?(value)
-              ruby_php = PHP.unserialize(value)
-              ruby_php.find_and_replace!(value_to_find, value_to_replace)
-              value.replace PHP.serialize(ruby_php)
-            else
-              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
-            end
-          end
-          sql = <<-EOD
-          UPDATE `wp_posts`
-          SET `post_content` = '#{client.escape(row['post_content'])}',
-          `guid` = '#{client.escape(row['guid'])}'
-          WHERE `ID` = #{row['ID']};
-          EOD
-          Logger.debug sql
-          client.query(sql)
-        end
-
-        # wp_postmeta
-        sql = <<-EOS
-        SELECT `meta_id`, `meta_value`
-        FROM `wp_postmeta`
-        WHERE `meta_value` REGEXP '#{escaped_value_to_find}';
-        EOS
-        wp_postmeta = client.query(sql)
-        wp_postmeta.each do |row|
-          row.each do |key, value|
-            if PHP.serialized?(value)
-              ruby_php = PHP.unserialize(value)
-              ruby_php.find_and_replace!(value_to_find, value_to_replace)
-              value.replace PHP.serialize(ruby_php)
-            else
-              value.gsub!(/#{value_to_find}/, value_to_replace) if value.instance_of? String
-            end
-          end
-          sql = <<-EOD
-          UPDATE `wp_postmeta`
-          SET `meta_value` = '#{client.escape(row['meta_value'])}'
-          WHERE `meta_id` = #{row['meta_id']};
-          EOD
-          Logger.debug sql
-          client.query(sql)
-        end
+      def errors?
+        @errors.count > 0
       end
 
       private

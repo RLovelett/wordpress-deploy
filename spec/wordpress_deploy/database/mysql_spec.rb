@@ -71,12 +71,56 @@ describe WordpressDeploy::Database::MySql do
   end
 
   describe "#migrate!" do
-    it "checks there is a valid connection"
-    it "gets list of tables on the destination database"
+    before(:each) do
+      # Prevent actual database calls from occurring
+      @database = double("Sequel::Database")
+      Sequel.stub(:mysql).and_return(@database)
+
+      @dataset = double("Sequel::Dataset")
+    end
+
+    let(:find)    { "http://#{Faker::Internet.domain_name}" }
+    let(:replace) { "http://#{Faker::Internet.domain_name}" }
+
+    context "without a valid database connection" do
+      before(:each) { subject.should_receive(:connection?).and_return(false) }
+      it { expect { subject.migrate!(find, replace) }.to raise_error }
+    end
+
+    it "gets list of tables on the destination database" do
+      columns = [[:id,
+                 {:type=>:integer,
+                  :primary_key=>true,
+                  :default=>"nextval('artist_id_seq'::regclass)",
+                  :ruby_default=>nil,
+                  :db_type=>"integer",
+                  :allow_null=>false}],
+                [:name,
+                 {:type=>:string,
+                  :primary_key=>false,
+                  :default=>nil,
+                  :ruby_default=>nil,
+                  :db_type=>"text",
+                  :allow_null=>false}]]
+      subject.should_receive(:connection?).and_return(true)
+      @database.should_receive(:tables).and_return([:table_1, :table_2])
+      @database.should_receive(:schema).once.with(:table_1).ordered.and_return(columns)
+      @database.should_receive(:schema).once.with(:table_2).ordered.and_return(columns)
+      @database.stub_chain(:select, :from, :where).with(kind_of(Sequel::SQL::BooleanExpression)).and_return(@dataset)
+      @database.stub_chain(:select, :from, :where).with(kind_of(Sequel::SQL::BooleanExpression)).and_return(@dataset)
+      @database.should_receive(:transaction).twice
+
+      @dataset.should_receive(:select_sql).twice.and_return("SELECT * blah")
+      @dataset.should_receive(:each).twice.and_yield({id: 1, name: ""})
+
+      expect { subject.migrate!(find, replace) }.to_not raise_error
+    end
+
     it "gets list of columns for each table"
     it "queries each column for each table for rows that need updating"
     it "builds a transaction containing many queries"
     it "executes all updates as one transaction"
+    it "logs errors if errors are created"
   end
 
 end
