@@ -1,58 +1,73 @@
 require 'spec_helper'
 
 include WordpressDeploy
+include WordpressDeploy::Storage
 
-describe WordpressDeploy::Storage::Ftp do
+# TODO
+# * Test for Errno::ECONNREFUSED
+# * Test for Net::FTPPermError
+# * Test for Net::FTPConnectionError
+
+describe WordpressDeploy::Storage::Ftp.new do
+  let(:control_port) { 21212 }
+  let(:data_port)    { 21213 }
+  let(:ftp_server)   { FakeFtp::Server.new(control_port, data_port) }
+  let(:ftp_directory) { WordpressDeploy::Config.wp_dir }
+
   before(:each) do
-    # None of the methods that follow are testing
-    # the Net::FTP object actions; therefore they
-    # can be stubbed out
-    @ftp = double("ftp")
-    [:connect, :login, :passive=].each do |methods|
-      @ftp.stub(methods).with(any_args)
+    # Start and stop the fake FTP server between each test
+    ftp_server.start
+  end
+
+  after(:each) do
+    # Start and stop the fake FTP server between each test
+    ftp_server.stop
+  end
+
+  before(:each) do
+    # Start FakeFS
+    FakeFS.activate!
+
+    FileUtils.mkdir_p(ftp_directory)
+    File.open(File.join(ftp_directory, "file1.txt"), "w") do |file|
+      file.puts("ryan")
     end
-    Net::FTP.stub(:new).and_return(@ftp)
   end
 
-  it "has methods that allow for interactive overwrite" do
-    expect { subject.transmit }.to raise_error(NotImplementedError)
-    expect { subject.receive }.to raise_error(NotImplementedError)
+  after(:each) do
+    # Stop the FakeFS
+    FakeFS.deactivate!
   end
 
-  it { should respond_to :transmit! }
-  it { should respond_to :receive! }
+  context "default parameters" do
+    its(:host) { should eq "localhost" }
+    its(:port) { should eq 21 }
+    its(:open?) { should be_false }
+    its(:user) { should eq "root" }
+    its(:password) { should eq "" }
+  end
 
-  context "FTP connection" do
+  describe WordpressDeploy::Storage::Ftp.new do
     before(:each) do
-      @ftp = double("ftp")
-      @ftp.should_receive(:connect).with("ftp.hanerutherford.biz", 77)
-      @ftp.should_receive(:login).with("red_user", "Bun__huPEMeBreM6tebRAp@eguzuQExe")
-      @ftp.should_receive(:passive=).with(true)
-      @ftp.stub(:pwd)
-      @ftp.stub(:closed?).and_return(false)
-      @ftp.stub(:close)
-      @ftp.stub(:chdir)
-      @ftp.stub(:putbinaryfile)
-      Net::FTP.stub(:new).and_return(@ftp)
-      WordpressDeploy::Storage::Ftp.any_instance.stub(:ftp).and_return(@ftp)
+      subject.host "localhost:#{control_port}"
+      subject.user "red_user"
+      subject.password "Bun__huPEMeBreM6tebRAp@eguzuQExe"
+      subject.destination "/html"
+    end
+    its(:port)  { should eq control_port }
+    its(:host)  { should eq "localhost" }
+    its(:open?) { should be_false }
+    its(:files) { should eq [File.join(ftp_directory, "file1.txt")] }
+
+    context "send files" do
+      before(:each) { subject.transmit! }
+      it { ftp_server.files.should have(1).file }
+      it { ftp_server.files.should include("file1.txt") }
     end
 
-    it "should send files" do
-      files = Dir.glob(File.join(data_dir, "**/*"))
-
-      Dir.should_receive(:glob).with("#{data_dir}/**/*").and_return(files)
-
-      ftp = WordpressDeploy::Storage::Ftp.new do
-        host "ftp.hanerutherford.biz:77"
-        user "red_user"
-        password "Bun__huPEMeBreM6tebRAp@eguzuQExe"
-        destination "/html"
-      end
-
-      ftp.should_receive(:put_file).exactly(files.count).times
-
-      ftp.transmit!
+    context "receive files" do
+      before(:each) { subject.receive! }
+      it "should have all the same files as the server"
     end
   end
-
 end
