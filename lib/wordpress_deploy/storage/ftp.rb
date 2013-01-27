@@ -22,6 +22,25 @@ module WordpressDeploy
         instance_eval(&block) if block_given?
       end
 
+      ##
+      # Check if there is an open connection.
+      #
+      # Captures all exceptions that would be raised; returns false in the
+      # of any exception being raised.
+      #
+      # Returns true only if the connection is open, false otherwise.
+      def open?
+        !ftp.closed?
+      rescue Net::FTPConnectionError
+        false
+      end
+
+      ##
+      # An array of the files in the configured Wordpress directory.
+      def files
+        Dir.glob(File.join(Config.wp_dir, "**/*")).sort
+      end
+
       def host(new_host = nil)
         unless new_host.nil?
           match = /(?<host>.*?)(?=:|\z)(:(?<port>\d+))?/.match(new_host.to_s)
@@ -78,7 +97,6 @@ module WordpressDeploy
       #
       def transmit!
         connect
-        files = Dir.glob(File.join(Config.wp_dir, "**/*")).sort
         files.each do |file|
           put_file file
         end
