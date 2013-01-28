@@ -5,6 +5,7 @@ include WordpressDeploy::Storage
 
 # TODO
 # * Test for Errno::ECONNREFUSED
+# * Test for Errno::ECONNRESET
 # * Test for Net::FTPPermError
 # * Test for Net::FTPConnectionError
 
@@ -24,20 +25,6 @@ describe WordpressDeploy::Storage::Ftp.new do
     ftp_server.stop
   end
 
-  before(:each) do
-    # Start FakeFS
-    FakeFS.activate!
-
-    FileUtils.mkdir_p(ftp_directory)
-    File.open(File.join(ftp_directory, "file1.txt"), "w") do |file|
-      file.puts("ryan")
-    end
-  end
-
-  after(:each) do
-    # Stop the FakeFS
-    FakeFS.deactivate!
-  end
 
   context "default parameters" do
     its(:host) { should eq "localhost" }
@@ -57,11 +44,28 @@ describe WordpressDeploy::Storage::Ftp.new do
     its(:port)  { should eq control_port }
     its(:host)  { should eq "localhost" }
     its(:open?) { should be_false }
-    its(:files) { should eq [File.join(ftp_directory, "file1.txt")] }
+    context "files" do
+      before(:all) do
+        # Start FakeFS
+        FakeFS.activate!
 
-    context "send files" do
+        FileUtils.mkdir_p(ftp_directory)
+        File.open(File.join(ftp_directory, "file1.txt"), "w") do |file|
+          file.puts("ryan")
+        end
+      end
+
+      after(:all) do
+        # Stop the FakeFS
+        FakeFS.deactivate!
+      end
+      its(:files) { should eq [File.join(ftp_directory, "file1.txt")] }
+    end
+
+    context "#transmit!" do
+      let(:file_count) { subject.files.size }
       before(:each) { subject.transmit! }
-      it { ftp_server.files.should have(1).file }
+      it { ftp_server.files.should have(file_count).file }
       it { ftp_server.files.should include("file1.txt") }
     end
 
