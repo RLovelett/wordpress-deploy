@@ -297,17 +297,28 @@ module WordpressDeploy
       private
 
       def mysqldump
-        arguments = "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p\"#{Shellwords.escape(password)}\" -B \"#{name}\""
+        options_file = OptionFile.new(
+            user,
+            password,
+            host,
+            port,
+            name,
+            :mysqldump
+        )
+        arguments = "--defaults-file=#{options_file.path} --databases #{name}"
         "#{utility('mysqldump')} #{arguments}"
       end
 
       def mysqlload(database, file_name)
-        arg_port = database.port
-        arg_host = database.host
-        arg_user = database.user
-        arg_pass = database.password
-        arg_name = database.name
-        arguments = "-P \"#{arg_port}\" -u \"#{arg_user}\" -h \"#{arg_host}\" -p\"#{Shellwords.escape(arg_pass)}\" -D \"#{arg_name}\""
+        options_file = OptionFile.new(
+            database.user,
+            database.password,
+            database.host,
+            database.port,
+            database.name,
+            :mysql
+        )
+        arguments = "--defaults-file=#{options_file.path}"
 
         "#{utility('mysql')} #{arguments} < #{file_name}"
       end
