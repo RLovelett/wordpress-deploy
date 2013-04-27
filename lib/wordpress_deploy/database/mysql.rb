@@ -10,13 +10,13 @@ module WordpressDeploy
       include WordpressDeploy::Cli::Helpers
 
       def initialize
-        @user       ||= "root"
-        @password   ||= ""
+        @user       ||= 'root'
+        @password   ||= ''
 
-        @host       ||= "localhost"
+        @host       ||= 'localhost'
         @port       ||= 3306
-        @socket     ||= ""
-        @name       ||= "wordpress"
+        @socket     ||= ''
+        @name       ||= 'wordpress'
 
         @has_port   ||= true
         @has_socket ||= false
@@ -174,7 +174,7 @@ module WordpressDeploy
           # the CREATE DATABASE and USE commands to make sense for
           # the 'to' configuration
           sql_dump = File.read(file)
-          sql_dump.gsub!(/^CREATE\ DATABASE.*$/i, "")
+          sql_dump.gsub!(/^CREATE\ DATABASE.*$/i, '')
           sql_dump.gsub!(/^USE\ `#{name}`/, "USE `#{to_db.name}`")
           tmp_file.puts sql_dump
 
@@ -298,7 +298,7 @@ module WordpressDeploy
 
       def mysqldump
         arguments = "-P \"#{port}\" -h \"#{host}\" -u \"#{user}\" -p\"#{Shellwords.escape(password)}\" -B \"#{name}\""
-        "#{utility("mysqldump")} #{arguments}"
+        "#{utility('mysqldump')} #{arguments}"
       end
 
       def mysqlload(database, file_name)
@@ -309,7 +309,7 @@ module WordpressDeploy
         arg_name = database.name
         arguments = "-P \"#{arg_port}\" -u \"#{arg_user}\" -h \"#{arg_host}\" -p\"#{Shellwords.escape(arg_pass)}\" -D \"#{arg_name}\""
 
-        "#{utility("mysql")} #{arguments} < #{file_name}"
+        "#{utility('mysql')} #{arguments} < #{file_name}"
       end
 
     end
