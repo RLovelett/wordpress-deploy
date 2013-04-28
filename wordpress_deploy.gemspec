@@ -17,10 +17,10 @@ Gem::Specification.new do |gem|
 
   ##
   # Gem dependencies
-  gem.add_dependency 'thor',               ['~> 0.15.4']
+  gem.add_dependency 'thor',               ['~> 0.18.1']
   gem.add_dependency 'colorize',           ['~> 0.5.8']
-  gem.add_dependency 'titleize',           ['~> 1.2.1']
-  gem.add_dependency 'actionpack',         ['~> 3.2.6']
+  gem.add_dependency 'titleize',           ['~> 1.3.0']
+  gem.add_dependency 'actionpack',         ['~> 3.2.13']
   gem.add_dependency 'php-serialize_ryan', ['~> 1.1.0']
   gem.add_dependency 'mysql2',             ['~> 0.3.11']
 
