@@ -2,8 +2,8 @@
 require File.expand_path('../lib/wordpress_deploy/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Ryan Lovelett"]
-  gem.email         = ["ryan@lovelett.me"]
+  gem.authors       = ['Ryan Lovelett']
+  gem.email         = ['ryan@lovelett.me']
   gem.description   = %q{Wordpress Deploy provides an elegant DSL in Ruby for modeling and executing your deployments.}
   gem.summary       = %q{Wordpress Deploy is a RubyGem, written for Linux and Mac OSX, that allows you to easily perform Wordpress deployment operations. It provides you with an elegant DSL in Ruby for modeling your deployments.}
   gem.homepage      = %q{https://github.com/RLovelett/wordpress-deploy}
@@ -11,8 +11,8 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "wordpress-deploy"
-  gem.require_paths = ["lib"]
+  gem.name          = 'wordpress-deploy'
+  gem.require_paths = ['lib']
   gem.version       = WordpressDeploy::VERSION
 
   ##
