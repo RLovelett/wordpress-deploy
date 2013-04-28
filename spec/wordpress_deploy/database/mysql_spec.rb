@@ -121,7 +121,7 @@ describe MySql do
     before(:each) do
       @mysql = WordpressDeploy::Environments.production.database
       @mysql.should_receive(:utility).with("mysqldump").and_return(mysqldump)
-      @mysql.should_receive(:run).with(mysql_cmd).and_return("STDOUT from run")
+      @mysql.should_receive(:run).and_return("STDOUT from run")
     end
 
     it "should call the mysqldump command with the correct arguments" do
