@@ -60,7 +60,8 @@ module WordpressDeploy
   end
 
   module Database
-    autoload :MySql, File.join(DATABASE_PATH, 'mysql')
+    autoload :MySql,      File.join(DATABASE_PATH, 'mysql')
+    autoload :OptionFile, File.join(DATABASE_PATH, 'option_file')
   end
 
   %w{version logger errors config environments environment}.each do |klass|
