@@ -231,7 +231,7 @@ module WordpressDeploy
 
           # Update the database
           sql = <<-EOD
-          FROM `#{table_prefix}options`
+          UPDATE `#{table_prefix}options`
           SET `option_value`='#{client.escape(row['option_value'])}'
           WHERE `option_id` = #{row['option_id']};
           EOD
@@ -258,7 +258,7 @@ module WordpressDeploy
             end
           end
           sql = <<-EOD
-          FROM `#{table_prefix}posts`
+          UPDATE `#{table_prefix}posts`
           SET `post_content` = '#{client.escape(row['post_content'])}',
           `guid` = '#{client.escape(row['guid'])}'
           WHERE `ID` = #{row['ID']};
