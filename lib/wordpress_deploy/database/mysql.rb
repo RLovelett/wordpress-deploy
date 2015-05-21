@@ -214,7 +214,7 @@ module WordpressDeploy
         # wp_options option_value
         sql = <<-EOS
         SELECT `option_id`, `option_value`
-        FROM `wp_options`
+        FROM `#{table_prefix}options`
         WHERE `option_value` REGEXP '#{escaped_value_to_find}';
         EOS
         wp_options = client.query(sql)
@@ -231,7 +231,7 @@ module WordpressDeploy
 
           # Update the database
           sql = <<-EOD
-          UPDATE `wp_options`
+          FROM `#{table_prefix}options`
           SET `option_value`='#{client.escape(row['option_value'])}'
           WHERE `option_id` = #{row['option_id']};
           EOD
@@ -242,7 +242,7 @@ module WordpressDeploy
         # wp_posts post_content, guid
         sql = <<-EOS
         SELECT `ID`, `post_content`, `guid`
-        FROM `wp_posts`
+        FROM `#{table_prefix}posts`
         WHERE `post_content` REGEXP '#{escaped_value_to_find}'
         AND   `guid`         REGEXP '#{escaped_value_to_find}';
         EOS
@@ -258,7 +258,7 @@ module WordpressDeploy
             end
           end
           sql = <<-EOD
-          UPDATE `wp_posts`
+          FROM `#{table_prefix}posts`
           SET `post_content` = '#{client.escape(row['post_content'])}',
           `guid` = '#{client.escape(row['guid'])}'
           WHERE `ID` = #{row['ID']};
@@ -270,7 +270,7 @@ module WordpressDeploy
         # wp_postmeta
         sql = <<-EOS
         SELECT `meta_id`, `meta_value`
-        FROM `wp_postmeta`
+        FROM `#{table_prefix}postmeta`
         WHERE `meta_value` REGEXP '#{escaped_value_to_find}';
         EOS
         wp_postmeta = client.query(sql)
