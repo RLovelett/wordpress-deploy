@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
+require 'fake_ftp'
+require 'fakefs/safe'
+require 'fakefs/spec_helpers'
 
 require 'wordpress_deploy'
 
@@ -22,6 +25,8 @@ RSpec.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
   config.mock_with :rspec
+
+  config.include FakeFS::SpecHelpers, fakefs: true
 
   # Reset the environment for each spec that is run
   config.before(:each) do
